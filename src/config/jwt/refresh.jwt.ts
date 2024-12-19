@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { logger } from '../../utils/logger';
-import { TokenPayload } from '../../types';
+import { roles, TokenPayload } from '../../types';
 
 
 
-export const signRefreshToken = async (id: string, role: 'admin' | 'user'): Promise<string> => {
+export const signRefreshToken = async (id: string, role: roles): Promise<string> => {
     try {
         const secretKey = process.env.REFRESH_TOKEN_SECRET;
         if (!secretKey) {
