@@ -34,7 +34,6 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const enum_type_1 = require("../types/enum.type");
 const PUserSchema = new mongoose_1.Schema({
     username: {
         type: String,
@@ -48,10 +47,6 @@ const PUserSchema = new mongoose_1.Schema({
     hashPassword: {
         type: String,
         required: true
-    },
-    role: {
-        type: String,
-        default: enum_type_1.roles.user
     },
     createAt: {
         type: Number,

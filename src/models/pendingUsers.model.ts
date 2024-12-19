@@ -1,14 +1,6 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { roles } from "../types/enum.type";
+import mongoose, { Schema } from "mongoose";
+import { IPUser } from "../types";
 
-
-interface IPUser extends Document {
-    username: string;
-    email: string;
-    hashPassword: string;
-    role: roles;
-    createAt: number
-}
 
 const PUserSchema = new Schema<IPUser>({
     username: {
@@ -23,10 +15,6 @@ const PUserSchema = new Schema<IPUser>({
     hashPassword: {
         type: String,
         required: true
-    },
-    role: {
-        type: String,
-        default: roles.user
     },
     createAt: {
         type: Number,

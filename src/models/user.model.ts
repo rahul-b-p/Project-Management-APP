@@ -1,14 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { roles } from "../types/enum.type";
+import mongoose, { Schema } from "mongoose";
+import { IUser, roles } from "../types";
 
 
-interface IUser extends Document {
-    username: string;
-    email: string;
-    hashPassword: string;
-    role: roles;
-    refreshToken?: string
-}
+
 
 const userSchema = new Schema<IUser>({
     username: {
@@ -26,7 +20,8 @@ const userSchema = new Schema<IUser>({
     },
     role: {
         type: String,
-        required: true
+        required: true,
+        enum: Object.values(roles)
     },
     refreshToken: {
         type: String,
