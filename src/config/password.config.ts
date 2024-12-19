@@ -5,7 +5,6 @@ export const getEncryptedPassword = async (password: string): Promise<string> =>
     try {
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
         const encryptedPassword: string = await bcrypt.hash(password, salt)
-        logger.info(encryptedPassword)
         return encryptedPassword;
     } catch (error) {
         logger.error(error);

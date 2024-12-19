@@ -19,7 +19,6 @@ const getEncryptedPassword = (password) => __awaiter(void 0, void 0, void 0, fun
     try {
         const salt = yield bcrypt_1.default.genSalt(Number(process.env.SALT));
         const encryptedPassword = yield bcrypt_1.default.hash(password, salt);
-        logger_1.logger.info(encryptedPassword);
         return encryptedPassword;
     }
     catch (error) {
