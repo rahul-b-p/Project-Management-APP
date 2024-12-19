@@ -4,6 +4,7 @@ import { logger } from './utils/logger';
 import dbConnect from './database/connection';
 import { authRouter, refreshRouter } from './routers';
 import { createDefaultAdmin } from './utils/adminSetup';
+import { ErrorHandler } from './middlewares';
 
 config();
 
@@ -19,6 +20,8 @@ app.use(express.json());
 app.use('/auth', authRouter);
 app.use('/refresh', refreshRouter);
 
+
+app.use(ErrorHandler);
 
 app.listen(port, () => {
     logger.info(`Server running at http://localhost:${port}`);
