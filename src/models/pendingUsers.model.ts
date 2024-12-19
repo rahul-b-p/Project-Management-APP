@@ -7,7 +7,7 @@ interface IPUser extends Document {
     email: string;
     hashPassword: string;
     role: roles;
-    createAt:number
+    createAt: number
 }
 
 const PUserSchema = new Schema<IPUser>({
@@ -28,10 +28,10 @@ const PUserSchema = new Schema<IPUser>({
         type: String,
         default: roles.user
     },
-    createAt:{
-        type:Number,
-        default:Date.now(),
-        index:{expires:'48h'}
+    createAt: {
+        type: Number,
+        default: Date.now(),
+        index: { expires: '48h' }
     }
 });
 
