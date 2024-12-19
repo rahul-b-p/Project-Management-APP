@@ -2,15 +2,15 @@ import mongoose, { Schema, Document } from "mongoose";
 import { roles } from "../types/enum.type";
 
 
-interface IUser extends Document {
+interface IPUser extends Document {
     username: string;
     email: string;
     hashPassword: string;
     role: roles;
-    refreshToken?: string
+    createAt:number
 }
 
-const userSchema = new Schema<IUser>({
+const PUserSchema = new Schema<IPUser>({
     username: {
         type: String,
         required: true
@@ -26,13 +26,14 @@ const userSchema = new Schema<IUser>({
     },
     role: {
         type: String,
-        required: true
+        default: roles.user
     },
-    refreshToken: {
-        type: String,
-        required: false
+    createAt:{
+        type:Number,
+        default:Date.now(),
+        index:{expires:'48h'}
     }
 });
 
-const Users = mongoose.model<IUser>('Users', userSchema);
-export default Users;
+const PUsers = mongoose.model<IPUser>('PUsers', PUserSchema);
+export default PUsers;

@@ -34,7 +34,8 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
+const enum_type_1 = require("../types/enum.type");
+const PUserSchema = new mongoose_1.Schema({
     username: {
         type: String,
         required: true
@@ -50,12 +51,13 @@ const userSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        required: true
+        default: enum_type_1.roles.user
     },
-    refreshToken: {
-        type: String,
-        required: false
+    createAt: {
+        type: Number,
+        default: Date.now(),
+        index: { expires: '48h' }
     }
 });
-const Users = mongoose_1.default.model('Users', userSchema);
-exports.default = Users;
+const PUsers = mongoose_1.default.model('PUsers', PUserSchema);
+exports.default = PUsers;
