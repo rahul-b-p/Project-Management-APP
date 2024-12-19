@@ -6,9 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = require("dotenv");
 const logger_1 = require("./utils/logger");
+const connection_1 = __importDefault(require("./database/connection"));
 (0, dotenv_1.config)();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
+(0, connection_1.default)();
 app.listen(port, () => {
     logger_1.logger.info(`Server running at http://localhost:${port}`);
 });
