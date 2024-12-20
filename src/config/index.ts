@@ -1,3 +1,4 @@
 export * from './password.config';
-export * from './jwt/access.jwt';
-export * from './jwt/refresh.jwt';
+export * from './jwt/access';
+export * from './jwt/refresh';
+export * from './redis/token';
