@@ -10,17 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = void 0;
-const user_service_1 = require("../services/user.service");
+const services_1 = require("../services");
 const errors_1 = require("../errors");
 const config_1 = require("../config");
 const logger_1 = require("../utils/logger");
 const config_2 = require("../config");
-const server_error_1 = require("../errors/server.error");
 const successResponse_1 = require("../utils/successResponse");
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
-        const existingUser = yield (0, user_service_1.findUserByEmail)(email);
+        const existingUser = yield (0, services_1.findUserByEmail)(email);
         if (!existingUser)
             return next(new errors_1.NotFoundError('User not found with given email id'));
         const isVerifiedPassword = yield (0, config_1.verifyPassword)(password, existingUser.hashPassword);
@@ -33,7 +32,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         logger_1.logger.error(error);
-        next(new server_error_1.InternalServerError('Something went wrong'));
+        next(new errors_1.InternalServerError('Something went wrong'));
     }
 });
 exports.login = login;

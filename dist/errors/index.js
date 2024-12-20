@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./authentication.error"), exports);
 __exportStar(require("./notfount.error"), exports);
 __exportStar(require("./badRequest.error"), exports);
+__exportStar(require("./server.error"), exports);

@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { loginBody } from "../types";
-import { findUserByEmail } from "../services/user.service";
-import { AuthenticationError, NotFoundError } from "../errors";
+import { findUserByEmail } from "../services";
+import { AuthenticationError, NotFoundError, InternalServerError } from "../errors";
 import { signAccessToken, verifyPassword } from "../config";
 import { logger } from "../utils/logger";
 import { signRefreshToken } from "../config";
-import { InternalServerError } from "../errors/server.error";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
