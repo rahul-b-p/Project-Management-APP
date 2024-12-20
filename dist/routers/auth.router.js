@@ -8,4 +8,4 @@ const schemas_1 = require("../schemas");
 exports.router = (0, express_1.Router)();
 exports.router.post('/login', (0, middlewares_1.validateRequest)(schemas_1.loginSchema), controllers_1.login);
 exports.router.post('/signup', (0, middlewares_1.validateRequest)(schemas_1.signupSchema), controllers_1.signup);
-exports.router.post('/logout');
+exports.router.post('/logout', middlewares_1.accessTokenAuth, controllers_1.logout);

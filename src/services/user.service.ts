@@ -58,3 +58,14 @@ export const findUserById = async(_id:string)=>{
         throw new Error(error.message);
     }
 }
+
+export const deleteRefreshToken = async (_id: Types.ObjectId, refreshToken: string) => {
+    try {
+        const updatedUser = await Users.findByIdAndUpdate({ _id }, { $unset:{refreshToken:1} });
+        await updatedUser?.save();
+        return;
+    } catch (error: any) {
+        logger.error(error.message);
+        throw new Error(error.message);
+    }
+}

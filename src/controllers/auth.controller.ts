@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { customRequestWithPayload, loginBody, signupBody } from "../types";
-import { findUserByEmail, findUserById, insertIntoPUser, pUserExistsByEmail, updateRefreshToken, userExistsByEmail } from "../services";
+import { deleteRefreshToken, findUserByEmail, findUserById, insertIntoPUser, pUserExistsByEmail, updateRefreshToken, userExistsByEmail } from "../services";
 import { AuthenticationError, NotFoundError, InternalServerError, ConflictError } from "../errors";
-import { signAccessToken, verifyPassword, signRefreshToken } from "../config";
+import { signAccessToken, verifyPassword, signRefreshToken, blackListToken } from "../config";
 import { logger } from "../utils/logger";
 import { sendSuccessResponse } from "../utils/successResponse";
 
@@ -55,14 +55,38 @@ export const refreshToken = async (req: customRequestWithPayload, res: Response,
         if (!id) throw new Error('The user ID was not added to the payload by the authentication middleware.');
 
         const existingUser = await findUserById(id);
-        if(!existingUser) return next(new NotFoundError());
+        if (!existingUser) return next(new NotFoundError());
 
         const AccessToken = await signAccessToken(existingUser._id.toString(), existingUser.role);
         const RefreshToken = await signRefreshToken(existingUser._id.toString(), existingUser.role);
 
         await updateRefreshToken(existingUser._id, RefreshToken);
 
-        res.status(200).json(await sendSuccessResponse('Token refreshed successfully',{AccessToken,RefreshToken}));
+        res.status(200).json(await sendSuccessResponse('Token refreshed successfully', { AccessToken, RefreshToken }));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const logout = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
+    try {
+        const id = req.payload?.id
+        if (!id) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const AccessToken = req.headers.authorization?.split(' ')[1];
+        if(!AccessToken) throw new Error('AccessToken missed from header after auth middleware');
+
+        const existingUser = await findUserById(id);
+        if (!existingUser) return next(new NotFoundError());
+
+        await blackListToken(AccessToken);
+        if(existingUser.refreshToken){
+            await blackListToken(existingUser.refreshToken);
+            await deleteRefreshToken(existingUser._id,existingUser.refreshToken);
+        }
+
+        res.status(200).json(await sendSuccessResponse('Logged out successfully.'));  
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
