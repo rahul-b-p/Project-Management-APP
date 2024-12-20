@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { loginBody } from "../types";
-import { findUserByEmail } from "../services";
-import { AuthenticationError, NotFoundError, InternalServerError } from "../errors";
-import { signAccessToken, verifyPassword } from "../config";
+import { loginBody, signupBody } from "../types";
+import { findUserByEmail, insertIntoPUser, pUserExistsByEmail, userExistsByEmail } from "../services";
+import { AuthenticationError, NotFoundError, InternalServerError, ConflictError } from "../errors";
+import { signAccessToken, verifyPassword, signRefreshToken } from "../config";
 import { logger } from "../utils/logger";
-import { signRefreshToken } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
@@ -14,16 +13,34 @@ export const login = async (req: Request<{}, any, loginBody>, res: Response, nex
     try {
         const { email, password } = req.body;
         const existingUser = await findUserByEmail(email);
-        if(!existingUser) return next(new NotFoundError('User not found with given email id'));
-        
-        const isVerifiedPassword = await verifyPassword(password,existingUser.hashPassword);
-        if(!isVerifiedPassword) return next(new AuthenticationError('Invalid Password'));
+        if (!existingUser) return next(new NotFoundError('User not found with given email id'));
 
-        const AccessToken = await signAccessToken(existingUser._id.toString(),existingUser.role);
-        const RefreshToken = await signRefreshToken(existingUser._id.toString(),existingUser.role);
+        const isVerifiedPassword = await verifyPassword(password, existingUser.hashPassword);
+        if (!isVerifiedPassword) return next(new AuthenticationError('Invalid Password'));
 
-        res.statusMessage="Login Successful"
-        res.status(200).json(await sendSuccessResponse('Login Successful',{AccessToken,RefreshToken}));
+        const AccessToken = await signAccessToken(existingUser._id.toString(), existingUser.role);
+        const RefreshToken = await signRefreshToken(existingUser._id.toString(), existingUser.role);
+
+        res.statusMessage = "Login Successful"
+        res.status(200).json(await sendSuccessResponse('Login Successful', { AccessToken, RefreshToken }));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const signup = async (req: Request<{}, any, signupBody>, res: Response, next: NextFunction) => {
+    try {
+        const { username, email } = req.body;
+
+        const isVerificationPending = await pUserExistsByEmail(email);
+        if (isVerificationPending) return next(new ConflictError("Your signup request is already pending admin verification. Please wait up to 48 hours."));
+
+        const isUserExists = await userExistsByEmail(email);
+        if (isUserExists) return next(new ConflictError("Email already in use. Please use a different email."));
+
+        await insertIntoPUser(req.body);
+        res.status(201).json(await sendSuccessResponse("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", { username, email }));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

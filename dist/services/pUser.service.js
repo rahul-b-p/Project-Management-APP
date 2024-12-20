@@ -9,23 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userExistsByEmail = exports.findUserByEmail = void 0;
+exports.insertIntoPUser = exports.pUserExistsByEmail = void 0;
+const config_1 = require("../config");
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
-const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const pUserExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield models_1.Users.findOne({ email });
-        return user;
-    }
-    catch (error) {
-        logger_1.logger.error(error.message);
-        throw new Error(error.message);
-    }
-});
-exports.findUserByEmail = findUserByEmail;
-const userExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const userExists = yield models_1.Users.exists({ email });
+        const userExists = yield models_1.PUsers.exists({ email });
         return userExists ? true : false;
     }
     catch (error) {
@@ -33,4 +23,20 @@ const userExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function*
         throw new Error(error.message);
     }
 });
-exports.userExistsByEmail = userExistsByEmail;
+exports.pUserExistsByEmail = pUserExistsByEmail;
+const insertIntoPUser = (userBody) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, email, password } = userBody;
+        const hashPassword = yield (0, config_1.getEncryptedPassword)(password);
+        const newPUser = new models_1.PUsers({
+            username, email, hashPassword
+        });
+        yield newPUser.save();
+        return;
+    }
+    catch (error) {
+        logger_1.logger.error(error.message);
+        throw new Error(error.message);
+    }
+});
+exports.insertIntoPUser = insertIntoPUser;

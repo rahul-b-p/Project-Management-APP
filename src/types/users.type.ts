@@ -5,7 +5,7 @@ export interface IPUser extends Document {
     username: string;
     email: string;
     hashPassword: string;
-    createAt: number
+    createAt?: number
 }
 
 export interface IUser extends Document {
