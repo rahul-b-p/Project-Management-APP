@@ -26,6 +26,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             return next(new errors_1.AuthenticationError('Invalid Password'));
         const AccessToken = yield (0, config_1.signAccessToken)(existingUser._id.toString(), existingUser.role);
         const RefreshToken = yield (0, config_1.signRefreshToken)(existingUser._id.toString(), existingUser.role);
+        yield (0, services_1.updateRefreshToken)(existingUser._id, RefreshToken);
         res.statusMessage = "Login Successful";
         res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Login Successful', { AccessToken, RefreshToken }));
     }

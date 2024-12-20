@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { loginBody, signupBody } from "../types";
-import { findUserByEmail, insertIntoPUser, pUserExistsByEmail, userExistsByEmail } from "../services";
+import { findUserByEmail, insertIntoPUser, pUserExistsByEmail, updateRefreshToken, userExistsByEmail } from "../services";
 import { AuthenticationError, NotFoundError, InternalServerError, ConflictError } from "../errors";
 import { signAccessToken, verifyPassword, signRefreshToken } from "../config";
 import { logger } from "../utils/logger";
@@ -20,6 +20,8 @@ export const login = async (req: Request<{}, any, loginBody>, res: Response, nex
 
         const AccessToken = await signAccessToken(existingUser._id.toString(), existingUser.role);
         const RefreshToken = await signRefreshToken(existingUser._id.toString(), existingUser.role);
+
+        await updateRefreshToken(existingUser._id,RefreshToken)
 
         res.statusMessage = "Login Successful"
         res.status(200).json(await sendSuccessResponse('Login Successful', { AccessToken, RefreshToken }));
