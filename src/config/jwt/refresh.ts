@@ -18,7 +18,7 @@ export const signRefreshToken = async (id: string, role: roles): Promise<string>
     }
 }
 
-export const verifyRefreshToken = async (token: string): Promise<TokenPayload | null> => {
+export const verifyRefreshToken = async (token: string): Promise<TokenPayload> => {
     try {
 
         const secretKey = process.env.REFRESH_TOKEN_SECRET;
@@ -26,9 +26,9 @@ export const verifyRefreshToken = async (token: string): Promise<TokenPayload | 
             throw new Error("Can't find the secret key to sign the Access token");
         }
 
-        const result = jwt.verify(token, secretKey) as TokenPayload | null;
-        return result || null;
+        const result = jwt.verify(token, secretKey) as TokenPayload;
+        return result;
     } catch (error) {
-        return null;
+        throw new Error("unauthorized token");
     }
 }

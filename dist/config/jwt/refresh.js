@@ -37,10 +37,10 @@ const verifyRefreshToken = (token) => __awaiter(void 0, void 0, void 0, function
             throw new Error("Can't find the secret key to sign the Access token");
         }
         const result = jsonwebtoken_1.default.verify(token, secretKey);
-        return result || null;
+        return result;
     }
     catch (error) {
-        return null;
+        throw new Error("unauthorized token");
     }
 });
 exports.verifyRefreshToken = verifyRefreshToken;
