@@ -1,3 +1,3 @@
-export * from './auth.controller';
-export * from './signupRequest.controller';
-export * from './user.controller';
+export * as authController from './auth.controller';
+export * as signUpRequestController from './signupRequest.controller';
+export * as userController from './user.controller';

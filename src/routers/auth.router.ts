@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { login, logout, signup } from "../controllers";
+import { authController } from "../controllers";
 import { accessTokenAuth, validateRequest } from "../middlewares";
 import { loginSchema, signupSchema } from "../schemas";
 
 export const router = Router();
 
 
-router.post('/login',validateRequest(loginSchema),login);
+router.post('/login',validateRequest(loginSchema),authController.login);
 
-router.post('/signup',validateRequest(signupSchema),signup);
+router.post('/signup',validateRequest(signupSchema),authController.signup);
 
-router.post('/logout',accessTokenAuth,logout);
+router.post('/logout',accessTokenAuth,authController.logout);

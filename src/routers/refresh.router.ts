@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { refreshTokenAuth } from "../middlewares";
-import { refreshToken } from "../controllers";
+import { authController } from "../controllers";
 
 export const router = Router();
 
 
-router.post('/',refreshTokenAuth,refreshToken);
+router.post('/', refreshTokenAuth, authController.refreshToken);

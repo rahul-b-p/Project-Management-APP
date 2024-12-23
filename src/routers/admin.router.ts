@@ -1,31 +1,31 @@
 import { Router } from "express";
-import { approveSignupRequest, createUser, deleteSignupRequest, deleteUserByAdmin, readAllSignupRequest, readAllUsers, readUserById, updateUserByAdmin } from "../controllers";
 import { validateRequest } from "../middlewares";
 import { signupSchema, updateUserByIdSchema } from "../schemas";
+import { signUpRequestController, userController } from "../controllers";
 
 
 export const router = Router();
 
 // read all signup requests
-router.get('/read-signup-reqs', readAllSignupRequest);
+router.get('/read-signup-reqs', signUpRequestController.readAllSignupRequest);
 
 // approving signup request and saving users
-router.patch('/approve-signup/:id', approveSignupRequest);
+router.patch('/approve-signup/:id', signUpRequestController.approveSignupRequest);
 
 // delete signup request
-router.delete('/delete-signup-req/:id', deleteSignupRequest);
+router.delete('/delete-signup-req/:id', signUpRequestController.deleteSignupRequest);
 
 // create new admin/user by specified parameter
-router.post('/create/:role', validateRequest(signupSchema), createUser);
+router.post('/create/:role', validateRequest(signupSchema), userController.createUser);
 
 // read all admins /users
-router.get('/read/:role', readAllUsers);
+router.get('/read/:role', userController.readAllUsers);
 
 // read user by id
-router.get('/read-user/:id', readUserById);
+router.get('/read-user/:id', userController.readUserById);
 
 // update user
-router.put('/update-user/:id', validateRequest(updateUserByIdSchema), updateUserByAdmin);
+router.put('/update-user/:id', validateRequest(updateUserByIdSchema), userController.updateUserByAdmin);
 
 // delete user
-router.delete('/delete-user/:id', deleteUserByAdmin);
+router.delete('/delete-user/:id', userController.deleteUserByAdmin);
