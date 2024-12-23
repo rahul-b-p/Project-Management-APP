@@ -1,6 +1,6 @@
 import { Users } from "../models"
 import { logger } from "../utils/logger";
-import { roles, User } from "../types";
+import { roles, signupBody, User } from "../types";
 
 
 
@@ -92,6 +92,22 @@ export const findRoleById = async (_id: string): Promise<roles | null> => {
         const user = await Users.findById({ _id });
         if (!user) return null;
         return user.role;
+    } catch (error: any) {
+        logger.error(error.message);
+        throw new Error(error.message);
+    }
+}
+
+export const insertUser = async (user: signupBody, role: roles):Promise<void> => {
+    try {
+        const newUser = new Users({
+            username:user.username,
+            email:user.email,
+            hashPassword:user.password,
+            role
+        });
+        await newUser.save();
+        return;
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);

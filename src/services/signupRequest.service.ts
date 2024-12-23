@@ -30,9 +30,9 @@ export const insertSignupRequest = async (userBody: signupBody): Promise<void> =
     }
 }
 
-export const findAllSignupRequests = async ():Promise<SignupRequest[]> => {
+export const findAllSignupRequests = async (): Promise<SignupRequest[]> => {
     try {
-        const allSignupRequests = await SignupRequests.find()
+        const allSignupRequests = await SignupRequests.find();
         const result: SignupRequest[] = allSignupRequests.map((request) => ({
             _id: request._id.toString(),
             username: request.username,
@@ -40,6 +40,32 @@ export const findAllSignupRequests = async ():Promise<SignupRequest[]> => {
         }));
         return result;
     } catch (error: any) {
+        logger.error(error.message);
+        throw new Error(error.message);
+    }
+}
+
+export const findSgnupRequestById = async (_id: string): Promise<signupBody | null> => {
+    try {
+        const signupRequest = await SignupRequests.findById({ _id });
+        if (!signupRequest) return null;
+
+        const result: signupBody = {
+            username: signupRequest.username,
+            email: signupRequest.email,
+            password: signupRequest.hashPassword
+        }
+        return result;
+    } catch (error: any) {
+        return null;
+    }
+}
+
+export const deleteSignupRequestById = async (_id: string): Promise<void> => {
+    try {
+        await SignupRequests.findByIdAndDelete({_id});
+        return;
+    } catch (error:any) {
         logger.error(error.message);
         throw new Error(error.message);
     }

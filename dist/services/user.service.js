@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
+exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,3 +117,20 @@ const findRoleById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.findRoleById = findRoleById;
+const insertUser = (user, role) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newUser = new models_1.Users({
+            username: user.username,
+            email: user.email,
+            hashPassword: user.password,
+            role
+        });
+        yield newUser.save();
+        return;
+    }
+    catch (error) {
+        logger_1.logger.error(error.message);
+        throw new Error(error.message);
+    }
+});
+exports.insertUser = insertUser;

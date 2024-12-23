@@ -9,7 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readAllSignupRequest = void 0;
+exports.approveSignupRequest = exports.readAllSignupRequest = void 0;
+const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
@@ -25,3 +26,20 @@ const readAllSignupRequest = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.readAllSignupRequest = readAllSignupRequest;
+const approveSignupRequest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const existingSignupRequest = yield (0, services_1.findSgnupRequestById)(id);
+        if (!existingSignupRequest)
+            return next(new errors_1.BadRequestError('Invalid signup request ID.'));
+        yield (0, services_1.insertUser)(existingSignupRequest, types_1.roles.user);
+        yield (0, services_1.deleteSignupRequestById)(id);
+        const { username, email } = existingSignupRequest;
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('User created successfully.', { username, email }));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.approveSignupRequest = approveSignupRequest;
