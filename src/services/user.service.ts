@@ -1,6 +1,7 @@
 import { Users } from "../models"
 import { logger } from "../utils/logger";
-import { roles, signupBody, UserToSave, UserToUse } from "../types";
+import { roles, signupBody, updateUserByIdBody, UserToSave, UserToUse } from "../types";
+import { getEncryptedPassword } from "../config";
 
 
 
@@ -113,17 +114,58 @@ export const insertUser = async (user: UserToSave): Promise<void> => {
     }
 }
 
-export const findAllUsersByRole = async (role: roles): Promise<UserToUse[]|[]> => {
+export const findAllUsersByRole = async (role: roles): Promise<UserToUse[] | []> => {
     try {
-        const allUsers = await Users.find({role});
-        const result:UserToUse[]=allUsers.map((user)=>({
-            _id:user._id.toString(),
-            username:user.username,
-            email:user.email,
-            role:user.role
+        const allUsers = await Users.find({ role });
+        const result: UserToUse[] = allUsers.map((user) => ({
+            _id: user._id.toString(),
+            username: user.username,
+            email: user.email,
+            role: user.role
         }));
         return result;
     } catch (error) {
         return [];
+    }
+}
+
+export const findhashPasswordById = async (_id: string): Promise<string | null> => {
+    try {
+        const user = await Users.findById({ _id });
+        if (!user) return null;
+        return user.hashPassword;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const userExistsById = async (_id: string): Promise<boolean> => {
+    try {
+        const userExists = await Users.exists({ _id });
+        return userExists ? true : false;
+    } catch (error: any) {
+        return false;
+    }
+}
+
+export const updateUserById = async (_id: string, updateBody: updateUserByIdBody): Promise<boolean> => {
+    try {
+        const { updateEmail, updatePassword, updateUsername } = updateBody
+        const existingUser = await Users.findById({ _id })
+        if (!existingUser) return false;
+
+        const hashPassword = updatePassword ? await getEncryptedPassword(updatePassword) : existingUser.hashPassword;
+        const updatedUser = await Users.findByIdAndUpdate({ _id }, {
+            username: updateUsername ? updateUsername : existingUser.username,
+            hashPassword,
+            email:updateEmail?updateEmail:existingUser.email
+        });
+        if(!updatedUser) return false;
+
+        await updatedUser.save();
+        return true;
+    } catch (error:any) {
+        logger.error(error.message);
+        throw new Error(error.message);
     }
 }

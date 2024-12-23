@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
+exports.updateUserByAdmin = exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -44,7 +44,6 @@ const readAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         if (role !== types_1.roles.user && role !== types_1.roles.admin)
             return next(new errors_1.BadRequestError('Requested to fetch users of role'));
         const AllUsers = yield (0, services_1.findAllUsersByRole)(role);
-        logger_1.logger.info(AllUsers);
         res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)(`Fetched all ${role}s`, AllUsers));
     }
     catch (error) {
@@ -67,3 +66,21 @@ const readUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.readUserById = readUserById;
+const updateUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const { updateEmail, updateUsername } = req.body;
+        const isUserExistS = yield (0, services_1.userExistsById)(id);
+        if (!isUserExistS)
+            return next(new errors_1.NotFoundError('User not Found with given id'));
+        const isUpdated = yield (0, services_1.updateUserById)(id, req.body);
+        if (!isUpdated)
+            return next(new errors_1.NotFoundError('User not Found with given id'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Updated userwith given id', { id, updateUsername, updateEmail }));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.updateUserByAdmin = updateUserByAdmin;

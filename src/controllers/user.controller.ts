@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
-import { customRequestWithPayload, roles, signupBody, UserToSave } from "../types";
+import { customRequestWithPayload, roles, signupBody, updateUserByIdBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
-import { findAllUsersByRole, findUserById, insertUser, userExistsByEmail } from "../services";
+import { findAllUsersByRole, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
 import { getEncryptedPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
@@ -38,7 +38,6 @@ export const readAllUsers = async (req: customRequestWithPayload<{ role: string 
         const { role } = req.params;
         if (role !== roles.user && role !== roles.admin) return next(new BadRequestError('Requested to fetch users of role'));
         const AllUsers = await findAllUsersByRole(role);
-        logger.info(AllUsers)
         res.status(200).json(await sendSuccessResponse(`Fetched all ${role}s`, AllUsers));
     } catch (error) {
         logger.error(error);
@@ -48,11 +47,31 @@ export const readAllUsers = async (req: customRequestWithPayload<{ role: string 
 
 export const readUserById = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const user = await findUserById(id);
-        if(!user) return next(new NotFoundError('User not Found with given id'));
+        if (!user) return next(new NotFoundError('User not Found with given id'));
 
-        res.status(200).json(await sendSuccessResponse('User details fetched',user))
+        res.status(200).json(await sendSuccessResponse('User details fetched', user))
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: string }, any, updateUserByIdBody>, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { updateEmail, updateUsername } = req.body;
+
+
+        const isUserExistS = await userExistsById(id);
+        if (!isUserExistS) return next(new NotFoundError('User not Found with given id'));
+
+        const isUpdated = await updateUserById(id, req.body);
+
+        if (!isUpdated) return next(new NotFoundError('User not Found with given id'));
+
+        res.status(200).json(await sendSuccessResponse('Updated userwith given id', { id, updateUsername, updateEmail }));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

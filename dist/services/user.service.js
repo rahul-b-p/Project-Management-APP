@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findAllUsersByRole = exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
+exports.updateUserById = exports.userExistsById = exports.findhashPasswordById = exports.findAllUsersByRole = exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
+const config_1 = require("../config");
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield models_1.Users.findOne({ email });
@@ -149,3 +150,48 @@ const findAllUsersByRole = (role) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.findAllUsersByRole = findAllUsersByRole;
+const findhashPasswordById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield models_1.Users.findById({ _id });
+        if (!user)
+            return null;
+        return user.hashPassword;
+    }
+    catch (error) {
+        return null;
+    }
+});
+exports.findhashPasswordById = findhashPasswordById;
+const userExistsById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userExists = yield models_1.Users.exists({ _id });
+        return userExists ? true : false;
+    }
+    catch (error) {
+        return false;
+    }
+});
+exports.userExistsById = userExistsById;
+const updateUserById = (_id, updateBody) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { updateEmail, updatePassword, updateUsername } = updateBody;
+        const existingUser = yield models_1.Users.findById({ _id });
+        if (!existingUser)
+            return false;
+        const hashPassword = updatePassword ? yield (0, config_1.getEncryptedPassword)(updatePassword) : existingUser.hashPassword;
+        const updatedUser = yield models_1.Users.findByIdAndUpdate({ _id }, {
+            username: updateUsername ? updateUsername : existingUser.username,
+            hashPassword,
+            email: updateEmail ? updateEmail : existingUser.email
+        });
+        if (!updatedUser)
+            return false;
+        yield updatedUser.save();
+        return true;
+    }
+    catch (error) {
+        logger_1.logger.error(error.message);
+        throw new Error(error.message);
+    }
+});
+exports.updateUserById = updateUserById;

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest, readAllUsers, readUserById } from "../controllers";
+import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest, readAllUsers, readUserById, updateUserByAdmin } from "../controllers";
 import { validateRequest } from "../middlewares";
-import { signupSchema } from "../schemas";
+import { signupSchema, updateUserByIdSchema } from "../schemas";
 
 
 export const router = Router();
@@ -23,4 +23,7 @@ router.get('/read/:role', readAllUsers);
 
 // read user by id
 router.get('/read-user/:id', readUserById);
+
+// update user by id
+router.put('/update-user/:id', validateRequest(updateUserByIdSchema), updateUserByAdmin);
 

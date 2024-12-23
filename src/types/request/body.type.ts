@@ -8,3 +8,9 @@ export interface signupBody {
     email: string;
     password: string;
 }
+
+export interface updateUserByIdBody {
+    updateUsername?: string;
+    updateEmail?: string;
+    updatePassword?: string;
+}
