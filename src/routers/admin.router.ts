@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest, readAllUsers, readUserById, updateUserByAdmin } from "../controllers";
+import { approveSignupRequest, createUser, deleteSignupRequest, deleteUserByAdmin, readAllSignupRequest, readAllUsers, readUserById, updateUserByAdmin } from "../controllers";
 import { validateRequest } from "../middlewares";
 import { signupSchema, updateUserByIdSchema } from "../schemas";
 
@@ -24,6 +24,8 @@ router.get('/read/:role', readAllUsers);
 // read user by id
 router.get('/read-user/:id', readUserById);
 
-// update user by id
+// update user
 router.put('/update-user/:id', validateRequest(updateUserByIdSchema), updateUserByAdmin);
 
+// delete user
+router.delete('/delete-user/:id', deleteUserByAdmin);

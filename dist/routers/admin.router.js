@@ -18,5 +18,7 @@ exports.router.post('/create/:role', (0, middlewares_1.validateRequest)(schemas_
 exports.router.get('/read/:role', controllers_1.readAllUsers);
 // read user by id
 exports.router.get('/read-user/:id', controllers_1.readUserById);
-// update user by id
+// update user
 exports.router.put('/update-user/:id', (0, middlewares_1.validateRequest)(schemas_1.updateUserByIdSchema), controllers_1.updateUserByAdmin);
+// delete user
+exports.router.delete('/delete-user/:id', controllers_1.deleteUserByAdmin);

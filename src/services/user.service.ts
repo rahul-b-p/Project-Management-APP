@@ -158,14 +158,24 @@ export const updateUserById = async (_id: string, updateBody: updateUserByIdBody
         const updatedUser = await Users.findByIdAndUpdate({ _id }, {
             username: updateUsername ? updateUsername : existingUser.username,
             hashPassword,
-            email:updateEmail?updateEmail:existingUser.email
+            email: updateEmail ? updateEmail : existingUser.email
         });
-        if(!updatedUser) return false;
+        if (!updatedUser) return false;
 
         await updatedUser.save();
         return true;
-    } catch (error:any) {
+    } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
+    }
+}
+
+export const deleteUserById = async (_id: string): Promise<boolean> => {
+    try {
+        const isDeleted = await Users.findByIdAndDelete({ _id });
+        if (!isDeleted) return false;
+        else return true;
+    } catch (error) {
+        return false;
     }
 }

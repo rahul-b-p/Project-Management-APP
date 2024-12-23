@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, roles, signupBody, updateUserByIdBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
-import { findAllUsersByRole, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
+import { deleteUserById, findAllUsersByRole, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
 import { getEncryptedPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
@@ -72,6 +72,20 @@ export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: stri
         if (!isUpdated) return next(new NotFoundError('User not Found with given id'));
 
         res.status(200).json(await sendSuccessResponse('Updated userwith given id', { id, updateUsername, updateEmail }));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const deleteUserByAdmin = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.params;
+
+        const isDeleted = await deleteUserById(id);
+        if(!isDeleted) return next(new NotFoundError('User not found to delete'));
+
+        res.status(200).json(await sendSuccessResponse('User deleted successfully'));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

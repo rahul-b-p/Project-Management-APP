@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserById = exports.userExistsById = exports.findhashPasswordById = exports.findAllUsersByRole = exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
+exports.deleteUserById = exports.updateUserById = exports.userExistsById = exports.findhashPasswordById = exports.findAllUsersByRole = exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const config_1 = require("../config");
@@ -195,3 +195,16 @@ const updateUserById = (_id, updateBody) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.updateUserById = updateUserById;
+const deleteUserById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const isDeleted = yield models_1.Users.findByIdAndDelete({ _id });
+        if (!isDeleted)
+            return false;
+        else
+            return true;
+    }
+    catch (error) {
+        return false;
+    }
+});
+exports.deleteUserById = deleteUserById;

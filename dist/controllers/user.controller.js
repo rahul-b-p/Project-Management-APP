@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserByAdmin = exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
+exports.deleteUserByAdmin = exports.updateUserByAdmin = exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -84,3 +84,17 @@ const updateUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.updateUserByAdmin = updateUserByAdmin;
+const deleteUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const isDeleted = yield (0, services_1.deleteUserById)(id);
+        if (!isDeleted)
+            return next(new errors_1.NotFoundError('User not found to delete'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User deleted successfully'));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.deleteUserByAdmin = deleteUserByAdmin;
