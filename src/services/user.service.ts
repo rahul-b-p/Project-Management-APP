@@ -1,16 +1,16 @@
 import { Users } from "../models"
 import { logger } from "../utils/logger";
-import { roles, signupBody, User } from "../types";
+import { roles, signupBody, UserToSave, UserToUse } from "../types";
 
 
 
 
 
-export const findUserByEmail = async (email: string) => {
+export const findUserByEmail = async (email: string): Promise<UserToUse & { hashPassword: string } | null> => {
     try {
         const user = await Users.findOne({ email });
         if (!user) return null;
-        const existingUser: User & { hashPassword: string } = {
+        const existingUser: UserToUse & { hashPassword: string } = {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,
@@ -58,11 +58,11 @@ export const checkRefreshTokenExistsById = async (_id: string, RefreshToken: str
     }
 }
 
-export const findUserById = async (_id: string): Promise<User | null> => {
+export const findUserById = async (_id: string): Promise<UserToUse | null> => {
     try {
         const user = await Users.findById({ _id })
         if (!user) return null;
-        const existingUser: User = {
+        const existingUser: UserToUse = {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,
@@ -98,13 +98,13 @@ export const findRoleById = async (_id: string): Promise<roles | null> => {
     }
 }
 
-export const insertUser = async (user: signupBody, role: roles):Promise<void> => {
+export const insertUser = async (user: UserToSave): Promise<void> => {
     try {
         const newUser = new Users({
-            username:user.username,
-            email:user.email,
-            hashPassword:user.password,
-            role
+            username: user.username,
+            email: user.email,
+            hashPassword: user.hashPassword,
+            role:user.role
         });
         await newUser.save();
         return;

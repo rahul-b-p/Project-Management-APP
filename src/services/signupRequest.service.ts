@@ -1,6 +1,6 @@
 import { getEncryptedPassword } from "../config";
 import { SignupRequests } from "../models";
-import { signupBody, SignupRequest } from "../types";
+import { signupBody, SignupRequest, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 
 
@@ -45,15 +45,15 @@ export const findAllSignupRequests = async (): Promise<SignupRequest[]> => {
     }
 }
 
-export const findSgnupRequestById = async (_id: string): Promise<signupBody | null> => {
+export const findSignupRequestById = async (_id: string): Promise<Omit<UserToSave,'role'> | null> => {
     try {
         const signupRequest = await SignupRequests.findById({ _id });
         if (!signupRequest) return null;
 
-        const result: signupBody = {
+        const result: Omit<UserToSave, 'role'>  = {
             username: signupRequest.username,
             email: signupRequest.email,
-            password: signupRequest.hashPassword
+            hashPassword:signupRequest.hashPassword
         }
         return result;
     } catch (error: any) {

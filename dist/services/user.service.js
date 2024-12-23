@@ -117,13 +117,13 @@ const findRoleById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.findRoleById = findRoleById;
-const insertUser = (user, role) => __awaiter(void 0, void 0, void 0, function* () {
+const insertUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newUser = new models_1.Users({
             username: user.username,
             email: user.email,
-            hashPassword: user.password,
-            role
+            hashPassword: user.hashPassword,
+            role: user.role
         });
         yield newUser.save();
         return;

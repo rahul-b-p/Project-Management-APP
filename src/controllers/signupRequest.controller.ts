@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
-import { customRequestWithPayload, roles } from "../types";
+import { customRequestWithPayload, roles, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { BadRequestError, InternalServerError, NotFoundError } from "../errors";
-import { deleteSignupRequestById, findAllSignupRequests, findSgnupRequestById, insertUser } from "../services";
+import { deleteSignupRequestById, findAllSignupRequests, findSignupRequestById, insertUser } from "../services";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
@@ -20,9 +20,10 @@ export const readAllSignupRequest = async (req: customRequestWithPayload, res: R
 export const approveSignupRequest = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const existingSignupRequest = await findSgnupRequestById(id);
+        const existingSignupRequest = await findSignupRequestById(id);
         if (!existingSignupRequest) return next(new BadRequestError('Invalid signup request ID.'));
-        await insertUser(existingSignupRequest, roles.user);
+        const userToInsert:UserToSave= {...existingSignupRequest,role:roles.user}
+        await insertUser(userToInsert);
         await deleteSignupRequestById(id);
 
         const { username, email } = existingSignupRequest;

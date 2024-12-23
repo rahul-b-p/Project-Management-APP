@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSignupRequestById = exports.findSgnupRequestById = exports.findAllSignupRequests = exports.insertSignupRequest = exports.signupRequestExistsByEmail = void 0;
+exports.deleteSignupRequestById = exports.findSignupRequestById = exports.findAllSignupRequests = exports.insertSignupRequest = exports.signupRequestExistsByEmail = void 0;
 const config_1 = require("../config");
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
@@ -56,7 +56,7 @@ const findAllSignupRequests = () => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.findAllSignupRequests = findAllSignupRequests;
-const findSgnupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+const findSignupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const signupRequest = yield models_1.SignupRequests.findById({ _id });
         if (!signupRequest)
@@ -64,7 +64,7 @@ const findSgnupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function
         const result = {
             username: signupRequest.username,
             email: signupRequest.email,
-            password: signupRequest.hashPassword
+            hashPassword: signupRequest.hashPassword
         };
         return result;
     }
@@ -72,7 +72,7 @@ const findSgnupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function
         return null;
     }
 });
-exports.findSgnupRequestById = findSgnupRequestById;
+exports.findSignupRequestById = findSignupRequestById;
 const deleteSignupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield models_1.SignupRequests.findByIdAndDelete({ _id });

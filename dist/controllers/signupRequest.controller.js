@@ -29,10 +29,11 @@ exports.readAllSignupRequest = readAllSignupRequest;
 const approveSignupRequest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const existingSignupRequest = yield (0, services_1.findSgnupRequestById)(id);
+        const existingSignupRequest = yield (0, services_1.findSignupRequestById)(id);
         if (!existingSignupRequest)
             return next(new errors_1.BadRequestError('Invalid signup request ID.'));
-        yield (0, services_1.insertUser)(existingSignupRequest, types_1.roles.user);
+        const userToInsert = Object.assign(Object.assign({}, existingSignupRequest), { role: types_1.roles.user });
+        yield (0, services_1.insertUser)(userToInsert);
         yield (0, services_1.deleteSignupRequestById)(id);
         const { username, email } = existingSignupRequest;
         res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('User created successfully.', { username, email }));

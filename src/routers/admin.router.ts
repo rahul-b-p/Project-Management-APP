@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { approveSignupRequest, deleteSignupRequest, readAllSignupRequest } from "../controllers";
+import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest } from "../controllers";
+import { validateRequest } from "../middlewares";
+import { signupSchema } from "../schemas";
 
 
 export const router = Router();
@@ -12,4 +14,7 @@ router.patch('/approve-signup/:id', approveSignupRequest);
 
 // delete signup request
 router.delete('/delete-signup-req/:id', deleteSignupRequest);
+
+// create new admin/user by specified parameter
+router.post('/create/:role', validateRequest(signupSchema), createUser);
 

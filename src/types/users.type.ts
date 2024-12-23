@@ -18,7 +18,7 @@ export interface IUser extends Document {
     refreshToken?: string
 }
 
-export interface User {
+export interface UserToUse{
     _id: string;
     username: string;
     email: string;
@@ -30,4 +30,11 @@ export interface SignupRequest{
     _id: string;
     username: string;
     email: string;
+}
+
+export interface UserToSave{
+    username:string,
+    email:string,
+    hashPassword:string,
+    role:roles
 }
