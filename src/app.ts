@@ -2,9 +2,9 @@ import express from 'express';
 import { config } from 'dotenv';
 import { logger } from './utils/logger';
 import dbConnect from './database/connection';
-import { authRouter, refreshRouter } from './routers';
+import { adminRouter, authRouter, refreshRouter } from './routers';
 import { createDefaultAdmin } from './utils/adminSetup';
-import { accessTokenAuth, ErrorHandler } from './middlewares';
+import { accessTokenAuth, ErrorHandler, verifyAdmin } from './middlewares';
 
 config();
 
@@ -22,7 +22,7 @@ app.use('/refresh', refreshRouter);
 
 app.use(accessTokenAuth);
 
-
+app.use('/admin', verifyAdmin, adminRouter)
 
 app.use(ErrorHandler);
 

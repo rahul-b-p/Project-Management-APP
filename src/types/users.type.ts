@@ -18,7 +18,7 @@ export interface IUser extends Document {
 }
 
 export interface User {
-    _id: Types.ObjectId;
+    _id: string;
     username: string;
     hashPassword:string;
     email: string;
