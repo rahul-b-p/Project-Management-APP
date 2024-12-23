@@ -16,3 +16,5 @@ exports.router.delete('/delete-signup-req/:id', controllers_1.deleteSignupReques
 exports.router.post('/create/:role', (0, middlewares_1.validateRequest)(schemas_1.signupSchema), controllers_1.createUser);
 // read all admins /users
 exports.router.get('/read/:role', controllers_1.readAllUsers);
+// read user by id
+exports.router.get('/read-user/:id', controllers_1.readUserById);

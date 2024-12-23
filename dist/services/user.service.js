@@ -81,8 +81,7 @@ const findUserById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,
-            role: user.role,
-            refreshToken: user.refreshToken
+            role: user.role
         };
         return existingUser;
     }

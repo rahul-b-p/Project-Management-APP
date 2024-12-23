@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readAllUsers = exports.createUser = void 0;
+exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -53,3 +53,17 @@ const readAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.readAllUsers = readAllUsers;
+const readUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const user = yield (0, services_1.findUserById)(id);
+        if (!user)
+            return next(new errors_1.NotFoundError('User not Found with given id'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User details fetched', user));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.readUserById = readUserById;

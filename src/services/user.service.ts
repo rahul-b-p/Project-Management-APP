@@ -66,8 +66,7 @@ export const findUserById = async (_id: string): Promise<UserToUse | null> => {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,
-            role: user.role,
-            refreshToken: user.refreshToken
+            role: user.role
         }
         return existingUser;
     } catch (error: any) {
