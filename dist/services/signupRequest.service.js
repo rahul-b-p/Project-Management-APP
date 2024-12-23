@@ -76,11 +76,10 @@ exports.findSgnupRequestById = findSgnupRequestById;
 const deleteSignupRequestById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield models_1.SignupRequests.findByIdAndDelete({ _id });
-        return;
+        return true;
     }
     catch (error) {
-        logger_1.logger.error(error.message);
-        throw new Error(error.message);
+        return false;
     }
 });
 exports.deleteSignupRequestById = deleteSignupRequestById;

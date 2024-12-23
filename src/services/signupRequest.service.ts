@@ -61,12 +61,11 @@ export const findSgnupRequestById = async (_id: string): Promise<signupBody | nu
     }
 }
 
-export const deleteSignupRequestById = async (_id: string): Promise<void> => {
+export const deleteSignupRequestById = async (_id: string): Promise<boolean> => {
     try {
         await SignupRequests.findByIdAndDelete({_id});
-        return;
+        return true;
     } catch (error:any) {
-        logger.error(error.message);
-        throw new Error(error.message);
+        return false
     }
 }

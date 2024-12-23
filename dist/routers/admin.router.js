@@ -8,3 +8,5 @@ exports.router = (0, express_1.Router)();
 exports.router.get('/read-signup-reqs', controllers_1.readAllSignupRequest);
 // approving signup request and saving users
 exports.router.patch('/approve-signup/:id', controllers_1.approveSignupRequest);
+// delete signup request
+exports.router.delete('/delete-signup-req/:id', controllers_1.deleteSignupRequest);

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.approveSignupRequest = exports.readAllSignupRequest = void 0;
+exports.deleteSignupRequest = exports.approveSignupRequest = exports.readAllSignupRequest = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -43,3 +43,17 @@ const approveSignupRequest = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.approveSignupRequest = approveSignupRequest;
+const deleteSignupRequest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const isDeleted = yield (0, services_1.deleteSignupRequestById)(id);
+        if (!isDeleted)
+            return next(new errors_1.NotFoundError('Signup Request not found'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Signup request deleted successfully.'));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.deleteSignupRequest = deleteSignupRequest;
