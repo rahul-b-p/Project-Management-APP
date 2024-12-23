@@ -14,3 +14,5 @@ exports.router.patch('/approve-signup/:id', controllers_1.approveSignupRequest);
 exports.router.delete('/delete-signup-req/:id', controllers_1.deleteSignupRequest);
 // create new admin/user by specified parameter
 exports.router.post('/create/:role', (0, middlewares_1.validateRequest)(schemas_1.signupSchema), controllers_1.createUser);
+// read all admins /users
+exports.router.get('/read/:role', controllers_1.readAllUsers);

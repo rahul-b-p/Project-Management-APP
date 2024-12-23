@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest } from "../controllers";
+import { approveSignupRequest, createUser, deleteSignupRequest, readAllSignupRequest, readAllUsers } from "../controllers";
 import { validateRequest } from "../middlewares";
 import { signupSchema } from "../schemas";
 
@@ -17,4 +17,7 @@ router.delete('/delete-signup-req/:id', deleteSignupRequest);
 
 // create new admin/user by specified parameter
 router.post('/create/:role', validateRequest(signupSchema), createUser);
+
+// read all admins /users
+router.get('/read/:role',readAllUsers);
 

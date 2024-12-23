@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
+exports.findAllUsersByRole = exports.insertUser = exports.findRoleById = exports.deleteRefreshToken = exports.findUserById = exports.checkRefreshTokenExistsById = exports.userExistsByEmail = exports.updateRefreshToken = exports.findUserByEmail = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
@@ -134,3 +134,19 @@ const insertUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.insertUser = insertUser;
+const findAllUsersByRole = (role) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allUsers = yield models_1.Users.find({ role });
+        const result = allUsers.map((user) => ({
+            _id: user._id.toString(),
+            username: user.username,
+            email: user.email,
+            role: user.role
+        }));
+        return result;
+    }
+    catch (error) {
+        return [];
+    }
+});
+exports.findAllUsersByRole = findAllUsersByRole;

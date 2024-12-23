@@ -104,12 +104,27 @@ export const insertUser = async (user: UserToSave): Promise<void> => {
             username: user.username,
             email: user.email,
             hashPassword: user.hashPassword,
-            role:user.role
+            role: user.role
         });
         await newUser.save();
         return;
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
+    }
+}
+
+export const findAllUsersByRole = async (role: roles): Promise<UserToUse[]|[]> => {
+    try {
+        const allUsers = await Users.find({role});
+        const result:UserToUse[]=allUsers.map((user)=>({
+            _id:user._id.toString(),
+            username:user.username,
+            email:user.email,
+            role:user.role
+        }));
+        return result;
+    } catch (error) {
+        return [];
     }
 }

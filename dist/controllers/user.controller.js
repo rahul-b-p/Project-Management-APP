@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = void 0;
+exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -38,3 +38,18 @@ const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.createUser = createUser;
+const readAllUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { role } = req.params;
+        if (role !== types_1.roles.user && role !== types_1.roles.admin)
+            return next(new errors_1.BadRequestError('Requested to fetch users of role'));
+        const AllUsers = yield (0, services_1.findAllUsersByRole)(role);
+        logger_1.logger.info(AllUsers);
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)(`Fetched all ${role}s`, AllUsers));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.readAllUsers = readAllUsers;

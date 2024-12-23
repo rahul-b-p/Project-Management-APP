@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, roles, signupBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { BadRequestError, ConflictError, InternalServerError } from "../errors";
-import { insertUser, userExistsByEmail } from "../services";
+import { findAllUsersByRole, insertUser, userExistsByEmail } from "../services";
 import { getEncryptedPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
@@ -27,6 +27,19 @@ export const createUser = async (req: customRequestWithPayload<{ role: string },
         await insertUser(userToInsert);
 
         res.status(201).json(await sendSuccessResponse(`New ${role} cretaed`, { username, email }))
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const readAllUsers = async (req: customRequestWithPayload<{ role: string }>, res: Response, next: NextFunction) => {
+    try {
+        const { role } = req.params;
+        if (role !== roles.user && role !== roles.admin) return next(new BadRequestError('Requested to fetch users of role'));
+        const AllUsers = await findAllUsersByRole(role);
+        logger.info(AllUsers)
+        res.status(200).json(await sendSuccessResponse(`Fetched all ${role}s`,AllUsers));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
