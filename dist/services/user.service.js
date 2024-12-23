@@ -15,7 +15,17 @@ const logger_1 = require("../utils/logger");
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield models_1.Users.findOne({ email });
-        return user;
+        if (!user)
+            return null;
+        const existingUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            refreshToken: user.refreshToken,
+            hashPassword: user.hashPassword
+        };
+        return existingUser;
     }
     catch (error) {
         logger_1.logger.error(error.message);
@@ -65,7 +75,16 @@ exports.checkRefreshTokenExistsById = checkRefreshTokenExistsById;
 const findUserById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield models_1.Users.findById({ _id });
-        return user;
+        if (!user)
+            return null;
+        const existingUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            refreshToken: user.refreshToken
+        };
+        return existingUser;
     }
     catch (error) {
         logger_1.logger.error(error.message);

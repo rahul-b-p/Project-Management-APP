@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Users } from "../models"
 import { logger } from "../utils/logger";
+import { IUser, User } from "../types";
 
 
 
@@ -9,14 +10,23 @@ import { logger } from "../utils/logger";
 export const findUserByEmail = async (email: string) => {
     try {
         const user = await Users.findOne({ email });
-        return user;
+        if (!user) return null
+        const existingUser: User = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            refreshToken: user.refreshToken,
+            hashPassword: user.hashPassword
+        }
+        return existingUser;
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
     }
 }
 
-export const updateRefreshToken = async (_id: Types.ObjectId, refreshToken: string) => {
+export const updateRefreshToken = async (_id: Types.ObjectId, refreshToken: string): Promise<void> => {
     try {
         const updatedUser = await Users.findByIdAndUpdate({ _id }, { refreshToken });
         await updatedUser?.save();
@@ -27,7 +37,7 @@ export const updateRefreshToken = async (_id: Types.ObjectId, refreshToken: stri
     }
 }
 
-export const userExistsByEmail = async (email: string) => {
+export const userExistsByEmail = async (email: string): Promise<boolean> => {
     try {
         const userExists = await Users.exists({ email })
         return userExists ? true : false;
@@ -37,7 +47,7 @@ export const userExistsByEmail = async (email: string) => {
     }
 }
 
-export const checkRefreshTokenExistsById = async (_id: string, RefreshToken: string) => {
+export const checkRefreshTokenExistsById = async (_id: string, RefreshToken: string): Promise<boolean> => {
     try {
         const user = await Users.findById({ _id });
         if (!user) return false;
@@ -49,19 +59,27 @@ export const checkRefreshTokenExistsById = async (_id: string, RefreshToken: str
     }
 }
 
-export const findUserById = async(_id:string)=>{
+export const findUserById = async (_id: string): Promise<Omit<User, 'hashPassword'> | null> => {
     try {
-        const user = await Users.findById({_id})
-        return user;
-    } catch (error:any) {
+        const user = await Users.findById({ _id })
+        if (!user) return null
+        const existingUser: Omit<User, 'hashPassword'> = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            refreshToken: user.refreshToken
+        }
+        return existingUser;
+    } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
     }
 }
 
-export const deleteRefreshToken = async (_id: Types.ObjectId, refreshToken: string) => {
+export const deleteRefreshToken = async (_id: Types.ObjectId, refreshToken: string): Promise<void> => {
     try {
-        const updatedUser = await Users.findByIdAndUpdate({ _id }, { $unset:{refreshToken:1} });
+        const updatedUser = await Users.findByIdAndUpdate({ _id }, { $unset: { refreshToken: 1 } });
         await updatedUser?.save();
         return;
     } catch (error: any) {

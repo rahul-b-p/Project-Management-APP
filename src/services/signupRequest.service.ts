@@ -4,7 +4,7 @@ import { signupBody } from "../types";
 import { logger } from "../utils/logger";
 
 
-export const pUserExistsByEmail = async (email: string) => {
+export const signupRequestExistsByEmail = async (email: string): Promise<boolean> => {
     try {
         const userExists = await SignupRequests.exists({ email })
         return userExists ? true : false;
@@ -14,7 +14,7 @@ export const pUserExistsByEmail = async (email: string) => {
     }
 }
 
-export const insertIntoPUser = async (userBody: signupBody) => {
+export const insertSignupRequest = async (userBody: signupBody): Promise<void> => {
     try {
         const { username, email, password } = userBody;
         const hashPassword = await getEncryptedPassword(password);

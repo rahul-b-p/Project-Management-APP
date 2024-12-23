@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { customRequestWithPayload, loginBody, signupBody } from "../types";
-import { deleteRefreshToken, findUserByEmail, findUserById, insertIntoPUser, pUserExistsByEmail, updateRefreshToken, userExistsByEmail } from "../services";
+import { deleteRefreshToken, findUserByEmail, findUserById, signupRequestExistsByEmail,insertSignupRequest, updateRefreshToken, userExistsByEmail } from "../services";
 import { AuthenticationError, NotFoundError, InternalServerError, ConflictError } from "../errors";
 import { signAccessToken, verifyPassword, signRefreshToken, blackListToken } from "../config";
 import { logger } from "../utils/logger";
@@ -35,13 +35,13 @@ export const signup = async (req: Request<{}, any, signupBody>, res: Response, n
     try {
         const { username, email } = req.body;
 
-        const isVerificationPending = await pUserExistsByEmail(email);
+        const isVerificationPending = await signupRequestExistsByEmail(email);
         if (isVerificationPending) return next(new ConflictError("Your signup request is already pending admin verification. Please wait up to 48 hours."));
 
         const isUserExists = await userExistsByEmail(email);
         if (isUserExists) return next(new ConflictError("Email already in use. Please use a different email."));
 
-        await insertIntoPUser(req.body);
+        await insertSignupRequest(req.body);
         res.status(201).json(await sendSuccessResponse("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", { username, email }));
     } catch (error) {
         logger.error(error);

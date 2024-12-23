@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./errorHandler.middleware"), exports);
 __exportStar(require("./validation.middleware"), exports);
 __exportStar(require("./auth.middleware"), exports);
+__exportStar(require("./role.middleware"), exports);

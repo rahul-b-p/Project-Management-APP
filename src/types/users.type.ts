@@ -16,3 +16,12 @@ export interface IUser extends Document {
     role: roles;
     refreshToken?: string
 }
+
+export interface User {
+    _id: Types.ObjectId;
+    username: string;
+    hashPassword:string;
+    email: string;
+    role: roles;
+    refreshToken?: string
+}

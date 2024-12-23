@@ -39,13 +39,13 @@ exports.login = login;
 const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username, email } = req.body;
-        const isVerificationPending = yield (0, services_1.pUserExistsByEmail)(email);
+        const isVerificationPending = yield (0, services_1.signupRequestExistsByEmail)(email);
         if (isVerificationPending)
             return next(new errors_1.ConflictError("Your signup request is already pending admin verification. Please wait up to 48 hours."));
         const isUserExists = yield (0, services_1.userExistsByEmail)(email);
         if (isUserExists)
             return next(new errors_1.ConflictError("Email already in use. Please use a different email."));
-        yield (0, services_1.insertIntoPUser)(req.body);
+        yield (0, services_1.insertSignupRequest)(req.body);
         res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", { username, email }));
     }
     catch (error) {

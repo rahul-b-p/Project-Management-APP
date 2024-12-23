@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 app.use(express_1.default.json());
 app.use('/auth', routers_1.authRouter);
 app.use('/refresh', routers_1.refreshRouter);
+app.use(middlewares_1.accessTokenAuth);
 app.use(middlewares_1.ErrorHandler);
 app.listen(port, () => {
     logger_1.logger.info(`Server running at http://localhost:${port}`);
