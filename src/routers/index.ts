@@ -1,2 +1,3 @@
 export { router as authRouter } from './auth.router';
 export { router as refreshRouter } from './refresh.router';
+export { router as adminRouter } from './admin.router';

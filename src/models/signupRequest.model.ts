@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import { IPUser } from "../types";
+import {ISignupRequests} from "../types";
 
 
-const PUserSchema = new Schema<IPUser>({
+const PUserSchema = new Schema<ISignupRequests>({
     username: {
         type: String,
         required: true
@@ -23,5 +23,5 @@ const PUserSchema = new Schema<IPUser>({
     }
 });
 
-const PUsers = mongoose.model<IPUser>('PUsers', PUserSchema);
-export default PUsers;
+const SignupRequests = mongoose.model<ISignupRequests>('SignupRequests', PUserSchema);
+export default SignupRequests;

@@ -1,7 +1,7 @@
 import { Document, Types } from "mongoose";
 import { roles } from "./roles.type";
 
-export interface IPUser extends Document {
+export interface ISignupRequests extends Document {
     username: string;
     email: string;
     hashPassword: string;

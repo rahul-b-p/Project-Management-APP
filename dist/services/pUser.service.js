@@ -15,7 +15,7 @@ const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const pUserExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userExists = yield models_1.PUsers.exists({ email });
+        const userExists = yield models_1.SignupRequests.exists({ email });
         return userExists ? true : false;
     }
     catch (error) {
@@ -28,7 +28,7 @@ const insertIntoPUser = (userBody) => __awaiter(void 0, void 0, void 0, function
     try {
         const { username, email, password } = userBody;
         const hashPassword = yield (0, config_1.getEncryptedPassword)(password);
-        const newPUser = new models_1.PUsers({
+        const newPUser = new models_1.SignupRequests({
             username, email, hashPassword
         });
         yield newPUser.save();
