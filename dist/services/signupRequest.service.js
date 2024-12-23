@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertSignupRequest = exports.signupRequestExistsByEmail = void 0;
+exports.findAllSignupRequests = exports.insertSignupRequest = exports.signupRequestExistsByEmail = void 0;
 const config_1 = require("../config");
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const signupRequestExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userExists = yield models_1.SignupRequests.exists({ email });
-        return userExists ? true : false;
+        const requestExists = yield models_1.SignupRequests.exists({ email });
+        return requestExists ? true : false;
     }
     catch (error) {
         logger_1.logger.error(error.message);
@@ -28,10 +28,10 @@ const insertSignupRequest = (userBody) => __awaiter(void 0, void 0, void 0, func
     try {
         const { username, email, password } = userBody;
         const hashPassword = yield (0, config_1.getEncryptedPassword)(password);
-        const newPUser = new models_1.SignupRequests({
+        const newRequest = new models_1.SignupRequests({
             username, email, hashPassword
         });
-        yield newPUser.save();
+        yield newRequest.save();
         return;
     }
     catch (error) {
@@ -40,3 +40,19 @@ const insertSignupRequest = (userBody) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.insertSignupRequest = insertSignupRequest;
+const findAllSignupRequests = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const allSignupRequests = yield models_1.SignupRequests.find();
+        const result = allSignupRequests.map((request) => ({
+            _id: request._id.toString(),
+            username: request.username,
+            email: request.email,
+        }));
+        return result;
+    }
+    catch (error) {
+        logger_1.logger.error(error.message);
+        throw new Error(error.message);
+    }
+});
+exports.findAllSignupRequests = findAllSignupRequests;

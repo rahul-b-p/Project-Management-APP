@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { customRequestWithPayload, loginBody, signupBody } from "../types";
-import { deleteRefreshToken, findUserByEmail, findUserById, signupRequestExistsByEmail,insertSignupRequest, updateRefreshToken, userExistsByEmail } from "../services";
+import { deleteRefreshToken, findUserByEmail, findUserById, signupRequestExistsByEmail, insertSignupRequest, updateRefreshToken, userExistsByEmail } from "../services";
 import { AuthenticationError, NotFoundError, InternalServerError, ConflictError } from "../errors";
 import { signAccessToken, verifyPassword, signRefreshToken, blackListToken } from "../config";
 import { logger } from "../utils/logger";
 import { sendSuccessResponse } from "../utils/successResponse";
+import { ForbiddenError } from "../errors/forbidden.error";
 
 
 
@@ -12,6 +13,10 @@ import { sendSuccessResponse } from "../utils/successResponse";
 export const login = async (req: Request<{}, any, loginBody>, res: Response, next: NextFunction) => {
     try {
         const { email, password } = req.body;
+
+        const isPendngSignupRequest = await signupRequestExistsByEmail(email);
+        if (isPendngSignupRequest) return next(new ForbiddenError("Your account is pending admin approval. Please wait for verification."));
+
         const existingUser = await findUserByEmail(email);
         if (!existingUser) return next(new NotFoundError('User not found with given email id'));
 
@@ -75,18 +80,18 @@ export const logout = async (req: customRequestWithPayload, res: Response, next:
         if (!id) throw new Error('The user ID was not added to the payload by the authentication middleware.');
 
         const AccessToken = req.headers.authorization?.split(' ')[1];
-        if(!AccessToken) throw new Error('AccessToken missed from header after auth middleware');
+        if (!AccessToken) throw new Error('AccessToken missed from header after auth middleware');
 
         const existingUser = await findUserById(id);
         if (!existingUser) return next(new NotFoundError());
 
         await blackListToken(AccessToken);
-        if(existingUser.refreshToken){
+        if (existingUser.refreshToken) {
             await blackListToken(existingUser.refreshToken);
-            await deleteRefreshToken(existingUser._id,existingUser.refreshToken);
+            await deleteRefreshToken(existingUser._id, existingUser.refreshToken);
         }
 
-        res.status(200).json(await sendSuccessResponse('Logged out successfully.'));  
+        res.status(200).json(await sendSuccessResponse('Logged out successfully.'));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

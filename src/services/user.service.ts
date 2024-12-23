@@ -10,7 +10,7 @@ export const findUserByEmail = async (email: string) => {
     try {
         const user = await Users.findOne({ email });
         if (!user) return null;
-        const existingUser: User = {
+        const existingUser: User & { hashPassword: string } = {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,
@@ -58,11 +58,11 @@ export const checkRefreshTokenExistsById = async (_id: string, RefreshToken: str
     }
 }
 
-export const findUserById = async (_id: string): Promise<Omit<User, 'hashPassword'> | null> => {
+export const findUserById = async (_id: string): Promise<User | null> => {
     try {
         const user = await Users.findById({ _id })
         if (!user) return null;
-        const existingUser: Omit<User, 'hashPassword'> = {
+        const existingUser: User = {
             _id: user._id.toString(),
             username: user.username,
             email: user.email,

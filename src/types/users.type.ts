@@ -2,6 +2,7 @@ import { Document, Types } from "mongoose";
 import { roles } from "./roles.type";
 
 export interface ISignupRequests extends Document {
+    _id: Types.ObjectId;
     username: string;
     email: string;
     hashPassword: string;
@@ -20,8 +21,13 @@ export interface IUser extends Document {
 export interface User {
     _id: string;
     username: string;
-    hashPassword:string;
     email: string;
     role: roles;
     refreshToken?: string
+}
+
+export interface SignupRequest{
+    _id: string;
+    username: string;
+    email: string;
 }

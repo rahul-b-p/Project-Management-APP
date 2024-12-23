@@ -15,9 +15,13 @@ const errors_1 = require("../errors");
 const config_1 = require("../config");
 const logger_1 = require("../utils/logger");
 const successResponse_1 = require("../utils/successResponse");
+const forbidden_error_1 = require("../errors/forbidden.error");
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
+        const isPendngSignupRequest = yield (0, services_1.signupRequestExistsByEmail)(email);
+        if (isPendngSignupRequest)
+            return next(new forbidden_error_1.ForbiddenError("Your account is pending admin approval. Please wait for verification."));
         const existingUser = yield (0, services_1.findUserByEmail)(email);
         if (!existingUser)
             return next(new errors_1.NotFoundError('User not found with given email id'));
