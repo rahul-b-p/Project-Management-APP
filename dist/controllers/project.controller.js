@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readProjectById = exports.createProject = void 0;
+exports.updateProject = exports.readProjectById = exports.createProject = void 0;
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
@@ -43,3 +43,17 @@ const readProjectById = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.readProjectById = readProjectById;
+const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const isUpdated = yield (0, services_1.updateProjectById)(id, req.body);
+        if (!isUpdated)
+            return next(new errors_1.NotFoundError('not found any project to update'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Project updated successfully', req.body));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.updateProject = updateProject;

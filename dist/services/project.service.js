@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findProjectById = exports.insertProject = void 0;
+exports.updateProjectById = exports.findProjectById = exports.insertProject = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const insertProject = (userId, project) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,3 +46,23 @@ const findProjectById = (_id) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.findProjectById = findProjectById;
+const updateProjectById = (_id, project) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const existingProject = yield models_1.Projects.findById({ _id });
+        if (!existingProject)
+            return false;
+        const { updateDescription, updateProjectName } = project;
+        const updatedProject = yield models_1.Projects.findByIdAndUpdate({ _id }, {
+            projectName: updateProjectName ? updateProjectName : existingProject.projectName,
+            description: updateDescription ? updateDescription : existingProject.description
+        });
+        if (!updatedProject)
+            return false;
+        yield updatedProject.save();
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
+});
+exports.updateProjectById = updateProjectById;

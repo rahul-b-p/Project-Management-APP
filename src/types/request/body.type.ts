@@ -26,3 +26,8 @@ export interface projectBody {
     projectName: string;
     description: string;
 }
+
+export interface updateProjectBody {
+    updateProjectName?: string;
+    updateDescription?: string;
+}

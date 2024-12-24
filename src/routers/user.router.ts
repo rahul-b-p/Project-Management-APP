@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares";
-import { projectSchema, updateUserSchema } from "../schemas";
+import { projectSchema, updateProjectSchema, updateUserSchema } from "../schemas";
 import { projectController, userController } from "../controllers";
 
 export const router = Router();
@@ -13,3 +13,6 @@ router.post('/create-project', validateRequest(projectSchema), projectController
 
 // read Projects by Id
 router.get('/read-project/:id',projectController.readProjectById);
+
+// update Project
+router.put('/update-project/:id',validateRequest(updateProjectSchema),projectController.updateProject);
