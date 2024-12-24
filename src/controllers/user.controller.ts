@@ -1,9 +1,9 @@
 import { NextFunction, Response } from "express";
-import { customRequestWithPayload, roles, signupBody, updateUserByIdBody, UserToSave } from "../types";
+import { customRequestWithPayload, roles, signupBody, updateUserBody, updateUserByIdBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
-import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
-import { deleteUserById, findAllUsersByRole, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
-import { getEncryptedPassword } from "../config";
+import { AuthenticationError, BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
+import { deleteUserById, findAllUsersByRole, findhashPasswordById, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
+import { getEncryptedPassword, verifyPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
@@ -68,7 +68,6 @@ export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: stri
         if (!isUserExistS) return next(new NotFoundError('User not Found with given id'));
 
         const isUpdated = await updateUserById(id, req.body);
-
         if (!isUpdated) return next(new NotFoundError('User not Found with given id'));
 
         res.status(200).json(await sendSuccessResponse('Updated userwith given id', { id, updateUsername, updateEmail }));
@@ -80,12 +79,34 @@ export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: stri
 
 export const deleteUserByAdmin = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const isDeleted = await deleteUserById(id);
-        if(!isDeleted) return next(new NotFoundError('User not found to delete'));
+        if (!isDeleted) return next(new NotFoundError('User not found to delete'));
 
         res.status(200).json(await sendSuccessResponse('User deleted successfully'));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const updateUser = async (req: customRequestWithPayload<{}, any, updateUserBody>, res: Response, next: NextFunction) => {
+    try {
+        const { currentPassword, ...updateUserContent } = req.body;
+        const id = req.payload?.id;
+        if (!id) throw new Error('not get the id stored on payload on auth middleware');
+
+        const hashPassword = await findhashPasswordById(id);
+        if (!hashPassword) return next(new AuthenticationError('Requested By an Invalid User'));
+
+        const isValidPassword = await verifyPassword(currentPassword, hashPassword);
+        if (!isValidPassword) return next(new AuthenticationError('Invalid Password'));
+
+        const isUpdated = await updateUserById(id, updateUserContent);
+        if (!isUpdated) return next(new NotFoundError('User not Found'));
+
+        res.status(200).json(await sendSuccessResponse('User details updated'));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

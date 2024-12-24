@@ -14,3 +14,10 @@ export interface updateUserByIdBody {
     updateEmail?: string;
     updatePassword?: string;
 }
+
+export interface updateUserBody {
+    currentPassword:string;
+    updateUsername?: string;
+    updateEmail?: string;
+    updatePassword?: string;
+}

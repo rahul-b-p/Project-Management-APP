@@ -2,7 +2,7 @@ import express from 'express';
 import { config } from 'dotenv';
 import { logger } from './utils/logger';
 import dbConnect from './database/connection';
-import { adminRouter, authRouter, refreshRouter } from './routers';
+import { adminRouter, authRouter, refreshRouter, userRouter } from './routers';
 import { createDefaultAdmin } from './utils/adminSetup';
 import { accessTokenAuth, ErrorHandler, verifyAdmin } from './middlewares';
 
@@ -18,11 +18,14 @@ app.use(express.json());
 
 
 app.use('/auth', authRouter);
+
 app.use('/refresh', refreshRouter);
 
 app.use(accessTokenAuth);
 
-app.use('/admin', verifyAdmin, adminRouter)
+app.use('/admin', verifyAdmin, adminRouter);
+
+app.use('/user',userRouter);
 
 app.use(ErrorHandler);
 
