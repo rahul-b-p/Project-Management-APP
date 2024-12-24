@@ -56,12 +56,22 @@ export const updateProjectById = async (_id: string, project: updateProjectBody)
     }
 }
 
-export const deleteProjectById = async (_id: string) => {
+export const deleteProjectById = async (_id: string): Promise<boolean> => {
     try {
-        const deleteProject = await Projects.findByIdAndDelete({_id});
-        if(!deleteProject) return false;
+        const deleteProject = await Projects.findByIdAndDelete({ _id });
+        if (!deleteProject) return false;
         else return true;
     } catch (error) {
         return false;
+    }
+}
+
+export const deleteProjectByUserId = async (userId: string): Promise<void> => {
+    try {
+        await Projects.deleteMany({ userId });
+        return;
+    } catch (error:any) {
+        logger.error(error.message);
+        throw new Error(error.message);
     }
 }

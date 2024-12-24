@@ -19,3 +19,6 @@ router.put('/update-project/:id',validateRequest(updateProjectSchema),projectCon
 
 // delete Project
 router.delete('/delete-Project/:id',projectController.deleteProject);
+
+// delete all project
+router.delete('/deleteAll-project',projectController.deleteAllProjectsByUser);

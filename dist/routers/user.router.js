@@ -16,3 +16,5 @@ exports.router.get('/read-project/:id', controllers_1.projectController.readProj
 exports.router.put('/update-project/:id', (0, middlewares_1.validateRequest)(schemas_1.updateProjectSchema), controllers_1.projectController.updateProject);
 // delete Project
 exports.router.delete('/delete-Project/:id', controllers_1.projectController.deleteProject);
+// delete all project
+exports.router.delete('/deleteAll-project', controllers_1.projectController.deleteAllProjectsByUser);

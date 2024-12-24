@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, projectBody } from "../types";
 import { logger } from "../utils/logger";
 import { InternalServerError, NotFoundError } from "../errors";
-import { deleteProjectById, findProjectById, insertProject, updateProjectById } from "../services";
+import { deleteProjectById, deleteProjectByUserId, findProjectById, insertProject, updateProjectById } from "../services";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
@@ -57,6 +57,20 @@ export const deleteProject = async (req: customRequestWithPayload<{ id: string }
         if (!isDeleted) return next(new NotFoundError('not found any project to delete'));
 
         res.status(200).json(await sendSuccessResponse('Project deleted successfully'));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const deleteAllProjectsByUser = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.payload?.id;
+        if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        await deleteProjectByUserId(userId);
+        res.status(200).json(await sendSuccessResponse('deleted all projects added by User'));
+
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
