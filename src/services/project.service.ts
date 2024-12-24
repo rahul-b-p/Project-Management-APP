@@ -55,3 +55,13 @@ export const updateProjectById = async (_id: string, project: updateProjectBody)
         return false;
     }
 }
+
+export const deleteProjectById = async (_id: string) => {
+    try {
+        const deleteProject = await Projects.findByIdAndDelete({_id});
+        if(!deleteProject) return false;
+        else return true;
+    } catch (error) {
+        return false;
+    }
+}

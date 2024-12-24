@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProject = exports.readProjectById = exports.createProject = void 0;
+exports.deleteProject = exports.updateProject = exports.readProjectById = exports.createProject = void 0;
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
@@ -57,3 +57,17 @@ const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.updateProject = updateProject;
+const deleteProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const isDeleted = yield (0, services_1.deleteProjectById)(id);
+        if (!isDeleted)
+            return next(new errors_1.NotFoundError('not found any project to delete'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Project deleted successfully'));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.deleteProject = deleteProject;

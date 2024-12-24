@@ -16,3 +16,6 @@ router.get('/read-project/:id',projectController.readProjectById);
 
 // update Project
 router.put('/update-project/:id',validateRequest(updateProjectSchema),projectController.updateProject);
+
+// delete Project
+router.delete('/delete-Project/:id',projectController.deleteProject);
