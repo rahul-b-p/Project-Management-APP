@@ -18,3 +18,4 @@ __exportStar(require("./errorHandler.middleware"), exports);
 __exportStar(require("./validation.middleware"), exports);
 __exportStar(require("./auth.middleware"), exports);
 __exportStar(require("./role.middleware"), exports);
+__exportStar(require("./user.middleware"), exports);

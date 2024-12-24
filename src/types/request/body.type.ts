@@ -16,8 +16,13 @@ export interface updateUserByIdBody {
 }
 
 export interface updateUserBody {
-    currentPassword:string;
+    currentPassword: string;
     updateUsername?: string;
     updateEmail?: string;
     updatePassword?: string;
+}
+
+export interface projectBody {
+    projectName: string;
+    description: string;
 }

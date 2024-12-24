@@ -4,7 +4,7 @@ import { logger } from './utils/logger';
 import dbConnect from './database/connection';
 import { adminRouter, authRouter, refreshRouter, userRouter } from './routers';
 import { createDefaultAdmin } from './utils/adminSetup';
-import { accessTokenAuth, ErrorHandler, verifyAdmin } from './middlewares';
+import { accessTokenAuth, ErrorHandler, verifyAdmin, verifyUser } from './middlewares';
 
 config();
 
@@ -25,7 +25,7 @@ app.use(accessTokenAuth);
 
 app.use('/admin', verifyAdmin, adminRouter);
 
-app.use('/user',userRouter);
+app.use('/user', verifyUser, userRouter);
 
 app.use(ErrorHandler);
 

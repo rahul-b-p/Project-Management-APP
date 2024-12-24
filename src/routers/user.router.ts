@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares";
-import { updateUserSchema } from "../schemas";
-import { userController } from "../controllers";
+import { projectSchema, updateUserSchema } from "../schemas";
+import { projectController, userController } from "../controllers";
 
 export const router = Router();
 
 // update user credentials
-router.put('/update',validateRequest(updateUserSchema),userController.updateUser);
+router.put('/update', validateRequest(updateUserSchema), userController.updateUser);
+
+// create project
+router.post('/create-project', validateRequest(projectSchema), projectController.createProject);
