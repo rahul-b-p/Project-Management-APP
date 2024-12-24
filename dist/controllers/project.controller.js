@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProject = void 0;
+exports.readProjectById = exports.createProject = void 0;
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
@@ -29,3 +29,17 @@ const createProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.createProject = createProject;
+const readProjectById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const project = yield (0, services_1.findProjectById)(id);
+        if (!project)
+            return next(new errors_1.NotFoundError('No project found with given Id'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Fetched details of project with given id', project));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.readProjectById = readProjectById;

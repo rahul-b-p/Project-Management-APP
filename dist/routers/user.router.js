@@ -10,3 +10,5 @@ exports.router = (0, express_1.Router)();
 exports.router.put('/update', (0, middlewares_1.validateRequest)(schemas_1.updateUserSchema), controllers_1.userController.updateUser);
 // create project
 exports.router.post('/create-project', (0, middlewares_1.validateRequest)(schemas_1.projectSchema), controllers_1.projectController.createProject);
+// read Projects by Id
+exports.router.get('/read-project/:id', controllers_1.projectController.readProjectById);

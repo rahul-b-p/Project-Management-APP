@@ -10,3 +10,6 @@ router.put('/update', validateRequest(updateUserSchema), userController.updateUs
 
 // create project
 router.post('/create-project', validateRequest(projectSchema), projectController.createProject);
+
+// read Projects by Id
+router.get('/read-project/:id',projectController.readProjectById);

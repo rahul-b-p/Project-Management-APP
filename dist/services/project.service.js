@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertProject = void 0;
+exports.findProjectById = exports.insertProject = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const insertProject = (userId, project) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,3 +27,22 @@ const insertProject = (userId, project) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.insertProject = insertProject;
+const findProjectById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const project = yield models_1.Projects.findById({ _id });
+        if (!project)
+            return null;
+        const result = {
+            _id: project._id,
+            userId: project.userId,
+            projectName: project.projectName,
+            description: project.description,
+            createAt: project.createAt
+        };
+        return result;
+    }
+    catch (error) {
+        return null;
+    }
+});
+exports.findProjectById = findProjectById;
