@@ -11,6 +11,8 @@ router.get('/read', userController.readUserDetails);
 // update user credentials
 router.put('/update', validateRequest(updateUserSchema), userController.updateUser);
 
+router.delete('/delete',userController.deleteUserAccount);
+
 // create project
 router.post('/create-project', validateRequest(projectSchema), projectController.createProject);
 

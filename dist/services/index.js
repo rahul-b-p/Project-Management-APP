@@ -18,3 +18,4 @@ __exportStar(require("./user.service"), exports);
 __exportStar(require("./signupRequest.service"), exports);
 __exportStar(require("./project.service"), exports);
 __exportStar(require("./aggregate.service"), exports);
+__exportStar(require("./account.service"), exports);

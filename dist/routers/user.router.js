@@ -10,6 +10,7 @@ exports.router = (0, express_1.Router)();
 exports.router.get('/read', controllers_1.userController.readUserDetails);
 // update user credentials
 exports.router.put('/update', (0, middlewares_1.validateRequest)(schemas_1.updateUserSchema), controllers_1.userController.updateUser);
+exports.router.delete('/delete', controllers_1.userController.deleteUserAccount);
 // create project
 exports.router.post('/create-project', (0, middlewares_1.validateRequest)(schemas_1.projectSchema), controllers_1.projectController.createProject);
 // read Projects by Id

@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.deleteUserByAdmin = exports.updateUserByAdmin = exports.readUserDetails = exports.readUserById = exports.readAllUserDetails = exports.readAllUsers = exports.createUser = void 0;
+exports.deleteUserAccount = exports.updateUser = exports.deleteUserByAdmin = exports.updateUserByAdmin = exports.readUserDetails = exports.readUserById = exports.readAllUserDetails = exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -161,3 +161,23 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.updateUser = updateUser;
+const deleteUserAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const id = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!id)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        logger_1.logger.info(id);
+        const isDeleted = yield (0, services_1.deleteAccountById)(id);
+        if (!isDeleted)
+            return next(new errors_1.NotFoundError('User Data not found!!'));
+        const AccessToken = (_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        if (!AccessToken)
+            throw new Error('AccessToken missed from header after auth middleware');
+        yield (0, config_1.blackListToken)(AccessToken);
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Account deleted successfully.'));
+    }
+    catch (error) {
+    }
+});
+exports.deleteUserAccount = deleteUserAccount;
