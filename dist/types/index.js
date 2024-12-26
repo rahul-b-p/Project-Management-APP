@@ -17,5 +17,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./roles.type"), exports);
 __exportStar(require("./users.type"), exports);
 __exportStar(require("./token.type"), exports);
+__exportStar(require("./project.type"), exports);
 __exportStar(require("./request/body.type"), exports);
 __exportStar(require("./request/payload.type"), exports);

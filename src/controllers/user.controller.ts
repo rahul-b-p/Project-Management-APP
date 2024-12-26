@@ -5,6 +5,7 @@ import { AuthenticationError, BadRequestError, ConflictError, InternalServerErro
 import { deleteUserById, findAllUsersByRole, findhashPasswordById, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
 import { getEncryptedPassword, verifyPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
+import { getUserWithProjects } from "../services/aggregate.service";
 
 
 
@@ -48,7 +49,7 @@ export const readAllUsers = async (req: customRequestWithPayload<{ role: string 
 export const readUserById = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const user = await findUserById(id);
+        const user = await getUserWithProjects(id);
         if (!user) return next(new NotFoundError('User not Found with given id'));
 
         res.status(200).json(await sendSuccessResponse('User details fetched', user))

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { IProject } from "../types/project.type";
+import { IProject } from "../types";
 
 
 

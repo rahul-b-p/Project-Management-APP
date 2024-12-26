@@ -1,6 +1,6 @@
 import { Projects } from "../models";
 import { projectBody, updateProjectBody } from "../types";
-import { ProjectToUse } from "../types/project.type";
+import { ProjectToUse } from "../types";
 import { logger } from "../utils/logger";
 
 

@@ -27,6 +27,7 @@ const errors_1 = require("../errors");
 const services_1 = require("../services");
 const config_1 = require("../config");
 const successResponse_1 = require("../utils/successResponse");
+const aggregate_service_1 = require("../services/aggregate.service");
 const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { role } = req.params;
@@ -66,7 +67,7 @@ exports.readAllUsers = readAllUsers;
 const readUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const user = yield (0, services_1.findUserById)(id);
+        const user = yield (0, aggregate_service_1.getUserWithProjects)(id);
         if (!user)
             return next(new errors_1.NotFoundError('User not Found with given id'));
         res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User details fetched', user));
