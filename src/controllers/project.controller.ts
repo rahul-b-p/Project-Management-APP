@@ -1,9 +1,10 @@
 import { NextFunction, Response } from "express";
-import { customRequestWithPayload, projectBody } from "../types";
+import { customRequestWithPayload, projectBody, roles } from "../types";
 import { logger } from "../utils/logger";
 import { InternalServerError, NotFoundError } from "../errors";
-import { deleteProjectById, deleteProjectByUserId, findProjectById, findProjectByUserId, insertProject, updateProjectById } from "../services";
+import { deleteProjectById, deleteProjectByUserId, findProjectById, findProjectByUserId, findRoleById, insertProject, updateProjectById, validateProjectOwner } from "../services";
 import { sendSuccessResponse } from "../utils/successResponse";
+import { ForbiddenError } from "../errors/forbidden.error";
 
 
 
@@ -24,6 +25,17 @@ export const createProject = async (req: customRequestWithPayload<{}, any, proje
 export const readProjectById = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+
+        const userId = req.payload?.id
+        if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const role = await findRoleById(userId);
+        if (!role) throw new Error('Some error has happended while adding or reading the role');
+
+        if (role == roles.user) {
+            const isValidUser = await validateProjectOwner(userId, id);
+            if (!isValidUser) return next(new ForbiddenError('User has no permision to edit the requested project'));
+        }
 
         const project = await findProjectById(id);
         if (!project) return next(new NotFoundError('No project found with given Id'));
@@ -52,6 +64,17 @@ export const updateProject = async (req: customRequestWithPayload<{ id: string }
     try {
         const { id } = req.params;
 
+        const userId = req.payload?.id
+        if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const role = await findRoleById(userId);
+        if(!role) throw new Error('Some error has happended while adding or reading the role');
+
+        if(role==roles.user){
+            const isValidUser= await validateProjectOwner(userId,id);
+            if(!isValidUser) return next(new ForbiddenError('User has no permision to edit the requested project'));
+        }
+
         const isUpdated = await updateProjectById(id, req.body);
         if (!isUpdated) return next(new NotFoundError('not found any project to update'));
 
@@ -65,6 +88,17 @@ export const updateProject = async (req: customRequestWithPayload<{ id: string }
 export const deleteProject = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+
+        const userId = req.payload?.id
+        if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const role = await findRoleById(userId);
+        if (!role) throw new Error('Some error has happended while adding or reading the role');
+
+        if (role == roles.user) {
+            const isValidUser = await validateProjectOwner(userId, id);
+            if (!isValidUser) return next(new ForbiddenError('User has no permision to edit the requested project'));
+        }
 
         const isDeleted = await deleteProjectById(id);
         if (!isDeleted) return next(new NotFoundError('not found any project to delete'));

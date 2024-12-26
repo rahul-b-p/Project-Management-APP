@@ -5,6 +5,15 @@ import { logger } from "../utils/logger";
 
 
 
+export const validateProjectOwner = async (userId: string, _id: string) => {
+    try {
+        const ProjectExists = await Projects.exists({ _id, userId });
+        return ProjectExists ? true : false;
+    } catch (error: any) {
+        logger.error(error.message);
+        throw new Error(error.message);
+    }
+}
 
 export const insertProject = async (userId: string, project: projectBody): Promise<void> => {
     try {

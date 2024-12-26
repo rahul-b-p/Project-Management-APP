@@ -10,10 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAllProjectsByUser = exports.deleteProject = exports.updateProject = exports.readAllProjectsByUser = exports.readProjectById = exports.createProject = void 0;
+const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
 const successResponse_1 = require("../utils/successResponse");
+const forbidden_error_1 = require("../errors/forbidden.error");
 const createProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -30,8 +32,20 @@ const createProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 exports.createProject = createProject;
 const readProjectById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { id } = req.params;
+        const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        const role = yield (0, services_1.findRoleById)(userId);
+        if (!role)
+            throw new Error('Some error has happended while adding or reading the role');
+        if (role == types_1.roles.user) {
+            const isValidUser = yield (0, services_1.validateProjectOwner)(userId, id);
+            if (!isValidUser)
+                return next(new forbidden_error_1.ForbiddenError('User has no permision to edit the requested project'));
+        }
         const project = yield (0, services_1.findProjectById)(id);
         if (!project)
             return next(new errors_1.NotFoundError('No project found with given Id'));
@@ -59,8 +73,20 @@ const readAllProjectsByUser = (req, res, next) => __awaiter(void 0, void 0, void
 });
 exports.readAllProjectsByUser = readAllProjectsByUser;
 const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { id } = req.params;
+        const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        const role = yield (0, services_1.findRoleById)(userId);
+        if (!role)
+            throw new Error('Some error has happended while adding or reading the role');
+        if (role == types_1.roles.user) {
+            const isValidUser = yield (0, services_1.validateProjectOwner)(userId, id);
+            if (!isValidUser)
+                return next(new forbidden_error_1.ForbiddenError('User has no permision to edit the requested project'));
+        }
         const isUpdated = yield (0, services_1.updateProjectById)(id, req.body);
         if (!isUpdated)
             return next(new errors_1.NotFoundError('not found any project to update'));
@@ -73,8 +99,20 @@ const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 exports.updateProject = updateProject;
 const deleteProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { id } = req.params;
+        const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        const role = yield (0, services_1.findRoleById)(userId);
+        if (!role)
+            throw new Error('Some error has happended while adding or reading the role');
+        if (role == types_1.roles.user) {
+            const isValidUser = yield (0, services_1.validateProjectOwner)(userId, id);
+            if (!isValidUser)
+                return next(new forbidden_error_1.ForbiddenError('User has no permision to edit the requested project'));
+        }
         const isDeleted = yield (0, services_1.deleteProjectById)(id);
         if (!isDeleted)
             return next(new errors_1.NotFoundError('not found any project to delete'));
