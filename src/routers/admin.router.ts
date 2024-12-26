@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares";
-import { signupSchema, updateUserByIdSchema } from "../schemas";
-import { signUpRequestController, userController } from "../controllers";
+import { projectSchema, signupSchema, updateUserByIdSchema } from "../schemas";
+import { projectController, signUpRequestController, userController } from "../controllers";
 
 
 export const router = Router();
@@ -32,3 +32,6 @@ router.delete('/delete-user/:id', userController.deleteUserByAdmin);
 
 // read all user with projects
 router.get('/read-all', userController.readAllUserDetails);
+
+// create project for a specified user
+router.post('/create-project/:userId', validateRequest(projectSchema), projectController.createProjectForUser);

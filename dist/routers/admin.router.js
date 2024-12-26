@@ -24,3 +24,5 @@ exports.router.put('/update-user/:id', (0, middlewares_1.validateRequest)(schema
 exports.router.delete('/delete-user/:id', controllers_1.userController.deleteUserByAdmin);
 // read all user with projects
 exports.router.get('/read-all', controllers_1.userController.readAllUserDetails);
+// create project for a specified user
+exports.router.post('/create-project/:userId', (0, middlewares_1.validateRequest)(schemas_1.projectSchema), controllers_1.projectController.createProjectForUser);

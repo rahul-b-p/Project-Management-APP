@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAllProjectsByUser = exports.deleteProject = exports.updateProject = exports.readAllProjectsByUser = exports.readProjectById = exports.createProject = void 0;
+exports.deleteAllProjectsByUser = exports.deleteProject = exports.updateProject = exports.readAllProjectsByUser = exports.readProjectById = exports.createProjectForUser = exports.createProject = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -31,6 +31,21 @@ const createProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.createProject = createProject;
+const createProjectForUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.params;
+        const isValidUser = yield (0, services_1.userExistsById)(userId);
+        if (!isValidUser)
+            return next(new errors_1.NotFoundError('User not found to add a new project'));
+        yield (0, services_1.insertProject)(userId, req.body);
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('new Project created', req.body));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.createProjectForUser = createProjectForUser;
 const readProjectById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
