@@ -2,10 +2,10 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, roles, signupBody, updateUserBody, updateUserByIdBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { AuthenticationError, BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
-import { deleteUserById, findAllUsersByRole, findhashPasswordById, findUserById, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
+import { deleteUserById, findAllUsersByRole, findhashPasswordById, getAllUsersWithProjects, getUserWithProjects, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
 import { getEncryptedPassword, verifyPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
-import { getUserWithProjects } from "../services/aggregate.service";
+
 
 
 
@@ -40,6 +40,16 @@ export const readAllUsers = async (req: customRequestWithPayload<{ role: string 
         if (role !== roles.user && role !== roles.admin) return next(new BadRequestError('Requested to fetch users of role'));
         const AllUsers = await findAllUsersByRole(role);
         res.status(200).json(await sendSuccessResponse(`Fetched all ${role}s`, AllUsers));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const readAllUserDetails = async (req: customRequestWithPayload, res: Response, next: NextFunction)=>{
+    try {
+        const AllUsers = await getAllUsersWithProjects();
+        res.status(200).json(await sendSuccessResponse(`Fetched all users with added  project data`, AllUsers));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

@@ -29,3 +29,6 @@ router.put('/update-user/:id', validateRequest(updateUserByIdSchema), userContro
 
 // delete user
 router.delete('/delete-user/:id', userController.deleteUserByAdmin);
+
+// read all user with projects
+router.get('/read-all', userController.readAllUserDetails);

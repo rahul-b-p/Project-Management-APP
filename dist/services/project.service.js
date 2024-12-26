@@ -34,7 +34,7 @@ const findProjectById = (_id) => __awaiter(void 0, void 0, void 0, function* () 
             return null;
         const result = {
             _id: project._id,
-            userId: project.userId,
+            userId: project.userId.toString(),
             projectName: project.projectName,
             description: project.description,
             createAt: project.createAt
@@ -51,7 +51,7 @@ const findProjectByUserId = (userId) => __awaiter(void 0, void 0, void 0, functi
         const projects = yield models_1.Projects.find({ userId });
         const result = projects.map((project) => ({
             _id: project._id,
-            userId: project.userId,
+            userId: project.userId.toString(),
             projectName: project.projectName,
             description: project.description,
             createAt: project.createAt

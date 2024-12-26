@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserWithProjects = void 0;
+exports.getAllUsersWithProjects = exports.getUserWithProjects = void 0;
+const models_1 = require("../models");
+const logger_1 = require("../utils/logger");
 const project_service_1 = require("./project.service");
 const user_service_1 = require("./user.service");
 const getUserWithProjects = (userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,8 +24,34 @@ const getUserWithProjects = (userId) => __awaiter(void 0, void 0, void 0, functi
         return Object.assign(Object.assign({}, user), { projects });
     }
     catch (error) {
-        console.error('Error fetching user with projects:', error);
+        logger_1.logger.error('Error fetching user with projects:', error);
         throw error;
     }
 });
 exports.getUserWithProjects = getUserWithProjects;
+const getAllUsersWithProjects = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const usersWithProjects = yield models_1.Users.aggregate([
+            {
+                $lookup: {
+                    from: 'projects',
+                    localField: '_id',
+                    foreignField: 'userId',
+                    as: 'projects'
+                },
+            },
+            {
+                $project: {
+                    hashPassword: 0,
+                    refreshToken: 0
+                }
+            }
+        ]);
+        return usersWithProjects;
+    }
+    catch (error) {
+        logger_1.logger.error('Error fetching users with projects:', error);
+        throw error;
+    }
+});
+exports.getAllUsersWithProjects = getAllUsersWithProjects;

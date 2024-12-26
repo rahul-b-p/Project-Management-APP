@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IProject } from "../types";
 
 
@@ -6,25 +6,23 @@ import { IProject } from "../types";
 
 const projectSchema = new Schema<IProject>({
     userId: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Users',
     },
     projectName: {
         type: String,
-        required: true
+        required: true,
     },
     description: {
         type: String,
-        required: true
+        required: true,
     },
     createAt: {
         type: Number,
-        default: Date.now()
-    }
-})
+        default: Date.now(),
+    },
+});
 
-
-
-const Projects = model('Projects', projectSchema)
-
+const Projects = mongoose.model<IProject>('Projects', projectSchema);
 export default Projects;

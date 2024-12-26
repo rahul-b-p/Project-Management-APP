@@ -26,7 +26,7 @@ export const findProjectById = async (_id: string): Promise<ProjectToUse | null>
         if (!project) return null;
         const result: ProjectToUse = {
             _id: project._id,
-            userId: project.userId,
+            userId: project.userId.toString(),
             projectName: project.projectName,
             description: project.description,
             createAt: project.createAt
@@ -42,7 +42,7 @@ export const findProjectByUserId = async (userId: string): Promise<ProjectToUse[
         const projects = await Projects.find({ userId });
         const result: ProjectToUse[] = projects.map((project) => ({
             _id: project._id,
-            userId: project.userId,
+            userId: project.userId.toString(),
             projectName: project.projectName,
             description: project.description,
             createAt: project.createAt
