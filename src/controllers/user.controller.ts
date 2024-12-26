@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, roles, signupBody, updateUserBody, updateUserByIdBody, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 import { AuthenticationError, BadRequestError, ConflictError, InternalServerError, NotFoundError } from "../errors";
-import { deleteAccountById, deleteUserById, findAllUsersByRole, findhashPasswordById, getAllUsersWithProjects, getUserWithProjects, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
+import { deleteAccountById, findAllUsersByRole, findhashPasswordById, getAllUsersWithProjects, getUserWithProjects, insertUser, updateUserById, userExistsByEmail, userExistsById } from "../services";
 import { blackListToken, getEncryptedPassword, verifyPassword } from "../config";
 import { sendSuccessResponse } from "../utils/successResponse";
 
@@ -46,7 +46,7 @@ export const readAllUsers = async (req: customRequestWithPayload<{ role: string 
     }
 }
 
-export const readAllUserDetails = async (req: customRequestWithPayload, res: Response, next: NextFunction)=>{
+export const readAllUserDetails = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
     try {
         const AllUsers = await getAllUsersWithProjects();
         res.status(200).json(await sendSuccessResponse(`Fetched all users with added  project data`, AllUsers));
@@ -108,7 +108,7 @@ export const deleteUserByAdmin = async (req: customRequestWithPayload<{ id: stri
     try {
         const { id } = req.params;
 
-        const isDeleted = await deleteUserById(id);
+        const isDeleted = await deleteAccountById(id);
         if (!isDeleted) return next(new NotFoundError('User not found to delete'));
 
         res.status(200).json(await sendSuccessResponse('User deleted successfully'));
@@ -140,14 +140,14 @@ export const updateUser = async (req: customRequestWithPayload<{}, any, updateUs
     }
 }
 
-export const deleteUserAccount = async (req: customRequestWithPayload, res: Response, next: NextFunction)=>{
+export const deleteUserAccount = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
     try {
         const id = req.payload?.id;
         if (!id) throw new Error('The user ID was not added to the payload by the authentication middleware.');
         logger.info(id)
-        
+
         const isDeleted = await deleteAccountById(id);
-        if(!isDeleted) return next(new NotFoundError('User Data not found!!'));
+        if (!isDeleted) return next(new NotFoundError('User Data not found!!'));
 
         const AccessToken = req.headers.authorization?.split(' ')[1];
         if (!AccessToken) throw new Error('AccessToken missed from header after auth middleware');
@@ -156,6 +156,6 @@ export const deleteUserAccount = async (req: customRequestWithPayload, res: Resp
 
         res.status(200).json(await sendSuccessResponse('Account deleted successfully.'));
     } catch (error) {
-        
+
     }
 }

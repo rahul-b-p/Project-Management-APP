@@ -126,7 +126,7 @@ exports.updateUserByAdmin = updateUserByAdmin;
 const deleteUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const isDeleted = yield (0, services_1.deleteUserById)(id);
+        const isDeleted = yield (0, services_1.deleteAccountById)(id);
         if (!isDeleted)
             return next(new errors_1.NotFoundError('User not found to delete'));
         res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User deleted successfully'));
