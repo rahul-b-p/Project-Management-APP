@@ -59,6 +59,22 @@ export const readUserById = async (req: customRequestWithPayload<{ id: string }>
     }
 }
 
+export const readUserDetails = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
+    try {
+        const id = req.payload?.id;
+        if (!id) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const user = await getUserWithProjects(id);
+        if (!user) return next(new NotFoundError('User not Found with given id'));
+
+        res.status(200).json(await sendSuccessResponse('User details fetched', user))
+
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
 export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: string }, any, updateUserByIdBody>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;

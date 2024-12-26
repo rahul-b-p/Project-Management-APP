@@ -5,6 +5,9 @@ import { projectController, userController } from "../controllers";
 
 export const router = Router();
 
+// readd user details
+router.get('/read', userController.readUserDetails);
+
 // update user credentials
 router.put('/update', validateRequest(updateUserSchema), userController.updateUser);
 

@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.deleteUserByAdmin = exports.updateUserByAdmin = exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
+exports.updateUser = exports.deleteUserByAdmin = exports.updateUserByAdmin = exports.readUserDetails = exports.readUserById = exports.readAllUsers = exports.createUser = void 0;
 const types_1 = require("../types");
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
@@ -78,6 +78,23 @@ const readUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.readUserById = readUserById;
+const readUserDetails = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const id = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!id)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        const user = yield (0, aggregate_service_1.getUserWithProjects)(id);
+        if (!user)
+            return next(new errors_1.NotFoundError('User not Found with given id'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User details fetched', user));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.readUserDetails = readUserDetails;
 const updateUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
