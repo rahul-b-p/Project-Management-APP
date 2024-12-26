@@ -12,6 +12,8 @@ exports.router.put('/update', (0, middlewares_1.validateRequest)(schemas_1.updat
 exports.router.post('/create-project', (0, middlewares_1.validateRequest)(schemas_1.projectSchema), controllers_1.projectController.createProject);
 // read Projects by Id
 exports.router.get('/read-project/:id', controllers_1.projectController.readProjectById);
+// read all projects by user
+exports.router.get('/read-projects', controllers_1.projectController.readAllProjectsByUser);
 // update Project
 exports.router.put('/update-project/:id', (0, middlewares_1.validateRequest)(schemas_1.updateProjectSchema), controllers_1.projectController.updateProject);
 // delete Project

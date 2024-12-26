@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAllProjectsByUser = exports.deleteProject = exports.updateProject = exports.readProjectById = exports.createProject = void 0;
+exports.deleteAllProjectsByUser = exports.deleteProject = exports.updateProject = exports.readAllProjectsByUser = exports.readProjectById = exports.createProject = void 0;
 const logger_1 = require("../utils/logger");
 const errors_1 = require("../errors");
 const services_1 = require("../services");
@@ -43,6 +43,21 @@ const readProjectById = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.readProjectById = readProjectById;
+const readAllProjectsByUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId)
+            throw new Error('The user ID was not added to the payload by the authentication middleware.');
+        const projects = yield (0, services_1.findProjectByUserId)(userId);
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('fetched all projects added by user', projects));
+    }
+    catch (error) {
+        logger_1.logger.error(error);
+        next(new errors_1.InternalServerError('Something went wrong'));
+    }
+});
+exports.readAllProjectsByUser = readAllProjectsByUser;
 const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;

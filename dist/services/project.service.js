@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProjectByUserId = exports.deleteProjectById = exports.updateProjectById = exports.findProjectById = exports.insertProject = void 0;
+exports.deleteProjectByUserId = exports.deleteProjectById = exports.updateProjectById = exports.findProjectByUserId = exports.findProjectById = exports.insertProject = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const insertProject = (userId, project) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,6 +46,23 @@ const findProjectById = (_id) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.findProjectById = findProjectById;
+const findProjectByUserId = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const projects = yield models_1.Projects.find({ userId });
+        const result = projects.map((project) => ({
+            _id: project._id,
+            userId: project.userId,
+            projectName: project.projectName,
+            description: project.description,
+            createAt: project.createAt
+        }));
+        return result;
+    }
+    catch (error) {
+        return [];
+    }
+});
+exports.findProjectByUserId = findProjectByUserId;
 const updateProjectById = (_id, project) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const existingProject = yield models_1.Projects.findById({ _id });

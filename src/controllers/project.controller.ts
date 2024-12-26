@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, projectBody } from "../types";
 import { logger } from "../utils/logger";
 import { InternalServerError, NotFoundError } from "../errors";
-import { deleteProjectById, deleteProjectByUserId, findProjectById, insertProject, updateProjectById } from "../services";
+import { deleteProjectById, deleteProjectByUserId, findProjectById, findProjectByUserId, insertProject, updateProjectById } from "../services";
 import { sendSuccessResponse } from "../utils/successResponse";
 
 
@@ -29,6 +29,19 @@ export const readProjectById = async (req: customRequestWithPayload<{ id: string
         if (!project) return next(new NotFoundError('No project found with given Id'));
 
         res.status(200).json(await sendSuccessResponse('Fetched details of project with given id', project));
+    } catch (error) {
+        logger.error(error);
+        next(new InternalServerError('Something went wrong'));
+    }
+}
+
+export const readAllProjectsByUser = async (req: customRequestWithPayload, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.payload?.id;
+        if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
+
+        const projects = await findProjectByUserId(userId);
+        res.status(200).json(await sendSuccessResponse('fetched all projects added by user',projects));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

@@ -37,6 +37,22 @@ export const findProjectById = async (_id: string): Promise<ProjectToUse | null>
     }
 }
 
+export const findProjectByUserId = async (userId: string): Promise<ProjectToUse[] | []> => {
+    try {
+        const projects = await Projects.find({ userId });
+        const result: ProjectToUse[] = projects.map((project) => ({
+            _id: project._id,
+            userId: project.userId,
+            projectName: project.projectName,
+            description: project.description,
+            createAt: project.createAt
+        }))
+        return result;
+    } catch (error) {
+        return [];
+    }
+}
+
 export const updateProjectById = async (_id: string, project: updateProjectBody): Promise<boolean> => {
     try {
         const existingProject = await Projects.findById({ _id });
@@ -70,7 +86,7 @@ export const deleteProjectByUserId = async (userId: string): Promise<void> => {
     try {
         await Projects.deleteMany({ userId });
         return;
-    } catch (error:any) {
+    } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
     }
