@@ -20,3 +20,4 @@ __exportStar(require("./token.type"), exports);
 __exportStar(require("./project.type"), exports);
 __exportStar(require("./request/body.type"), exports);
 __exportStar(require("./request/payload.type"), exports);
+__exportStar(require("./signupRequest.type"), exports);

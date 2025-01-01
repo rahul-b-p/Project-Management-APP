@@ -13,6 +13,14 @@ exports.deleteSignupRequestById = exports.findSignupRequestById = exports.findAl
 const config_1 = require("../config");
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
+const convertToSignUpRequestToUse = (signupData) => {
+    return {
+        _id: signupData._id,
+        username: signupData.username,
+        email: signupData.email,
+        createAt: signupData.createAt
+    };
+};
 const signupRequestExistsByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const requestExists = yield models_1.SignupRequests.exists({ email });
@@ -32,7 +40,7 @@ const insertSignupRequest = (userBody) => __awaiter(void 0, void 0, void 0, func
             username, email, hashPassword
         });
         yield newRequest.save();
-        return;
+        return convertToSignUpRequestToUse(newRequest);
     }
     catch (error) {
         logger_1.logger.error(error.message);
@@ -42,13 +50,8 @@ const insertSignupRequest = (userBody) => __awaiter(void 0, void 0, void 0, func
 exports.insertSignupRequest = insertSignupRequest;
 const findAllSignupRequests = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const allSignupRequests = yield models_1.SignupRequests.find();
-        const result = allSignupRequests.map((request) => ({
-            _id: request._id.toString(),
-            username: request.username,
-            email: request.email,
-        }));
-        return result;
+        const allSignupRequests = (yield models_1.SignupRequests.find().lean()).map(convertToSignUpRequestToUse);
+        return allSignupRequests;
     }
     catch (error) {
         logger_1.logger.error(error.message);

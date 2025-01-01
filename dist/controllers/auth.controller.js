@@ -49,8 +49,8 @@ const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         const isUserExists = yield (0, services_1.userExistsByEmail)(email);
         if (isUserExists)
             return next(new errors_1.ConflictError("Email already in use. Please use a different email."));
-        yield (0, services_1.insertSignupRequest)(req.body);
-        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", { username, email }));
+        const newRequest = yield (0, services_1.insertSignupRequest)(req.body);
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", newRequest));
     }
     catch (error) {
         logger_1.logger.error(error);

@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const dateFormat_1 = require("../utils/dateFormat");
 const PUserSchema = new mongoose_1.Schema({
     username: {
         type: String,
@@ -49,8 +50,8 @@ const PUserSchema = new mongoose_1.Schema({
         required: true
     },
     createAt: {
-        type: Number,
-        default: Date.now(),
+        type: String,
+        default: (0, dateFormat_1.getCurrentDateTime)(),
         index: { expires: '48h' }
     }
 });

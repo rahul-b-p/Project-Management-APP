@@ -46,8 +46,8 @@ export const signup = async (req: Request<{}, any, signupBody>, res: Response, n
         const isUserExists = await userExistsByEmail(email);
         if (isUserExists) return next(new ConflictError("Email already in use. Please use a different email."));
 
-        await insertSignupRequest(req.body);
-        res.status(201).json(await sendSuccessResponse("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", { username, email }));
+        const newRequest = await insertSignupRequest(req.body);
+        res.status(201).json(await sendSuccessResponse("Signup request submitted with a validity period of 48 hours. Users can resubmit a request if not verified within this timeframe.", newRequest));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

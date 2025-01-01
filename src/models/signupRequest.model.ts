@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import {ISignupRequests} from "../types";
+import { getCurrentDateTime } from "../utils/dateFormat";
 
 
 const PUserSchema = new Schema<ISignupRequests>({
@@ -17,8 +18,8 @@ const PUserSchema = new Schema<ISignupRequests>({
         required: true
     },
     createAt: {
-        type: Number,
-        default: Date.now(),
+        type: String,
+        default: getCurrentDateTime(),
         index: { expires: '48h' }
     }
 });

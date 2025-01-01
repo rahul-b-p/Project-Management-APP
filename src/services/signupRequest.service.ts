@@ -1,8 +1,17 @@
 import { getEncryptedPassword } from "../config";
 import { SignupRequests } from "../models";
-import { signupBody, SignupRequest, UserToSave } from "../types";
+import { signupBody, SignUpRequestToUse, UserToSave } from "../types";
 import { logger } from "../utils/logger";
 
+
+const convertToSignUpRequestToUse=(signupData:any):SignUpRequestToUse=>{
+    return{
+         _id:signupData._id,
+         username:signupData.username,
+         email:signupData.email,
+         createAt:signupData.createAt
+    }
+}
 
 export const signupRequestExistsByEmail = async (email: string): Promise<boolean> => {
     try {
@@ -14,7 +23,7 @@ export const signupRequestExistsByEmail = async (email: string): Promise<boolean
     }
 }
 
-export const insertSignupRequest = async (userBody: signupBody): Promise<void> => {
+export const insertSignupRequest = async (userBody: signupBody): Promise<SignUpRequestToUse> => {
     try {
         const { username, email, password } = userBody;
         const hashPassword = await getEncryptedPassword(password);
@@ -23,22 +32,17 @@ export const insertSignupRequest = async (userBody: signupBody): Promise<void> =
             username, email, hashPassword
         });
         await newRequest.save();
-        return;
+        return convertToSignUpRequestToUse(newRequest);
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
     }
 }
 
-export const findAllSignupRequests = async (): Promise<SignupRequest[]> => {
+export const findAllSignupRequests = async (): Promise<SignUpRequestToUse[]> => {
     try {
-        const allSignupRequests = await SignupRequests.find();
-        const result: SignupRequest[] = allSignupRequests.map((request) => ({
-            _id: request._id.toString(),
-            username: request.username,
-            email: request.email,
-        }));
-        return result;
+        const allSignupRequests = (await SignupRequests.find().lean()).map(convertToSignUpRequestToUse);
+        return allSignupRequests;
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
