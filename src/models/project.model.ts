@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IProject } from "../types";
+import { getCurrentDateTime } from "../utils/dateFormat";
 
 
 
@@ -19,8 +20,8 @@ const projectSchema = new Schema<IProject>({
         required: true,
     },
     createAt: {
-        type: Number,
-        default: Date.now(),
+        type: String,
+        default: getCurrentDateTime(),
     },
 });
 

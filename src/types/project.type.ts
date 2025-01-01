@@ -8,7 +8,7 @@ export interface IProject extends Document {
     userId: Types.ObjectId;
     projectName: string;
     description: string;
-    createAt: number;
+    createAt: string;
 }
 
 export interface ProjectToUse {
@@ -16,5 +16,5 @@ export interface ProjectToUse {
     userId: string;
     projectName: string;
     description: string;
-    createAt: number;
+    createAt: string;
 }
