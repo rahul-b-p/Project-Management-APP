@@ -91,6 +91,9 @@ const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     var _a;
     try {
         const { id } = req.params;
+        const isProjectExists = yield (0, services_1.projectExistById)(id);
+        if (!isProjectExists)
+            return next(new errors_1.NotFoundError('Not Found any project with given Id'));
         const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
         if (!userId)
             throw new Error('The user ID was not added to the payload by the authentication middleware.');
@@ -117,6 +120,9 @@ const deleteProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     var _a;
     try {
         const { id } = req.params;
+        const isProjectExists = yield (0, services_1.projectExistById)(id);
+        if (!isProjectExists)
+            return next(new errors_1.NotFoundError('Not Found any project with given Id'));
         const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
         if (!userId)
             throw new Error('The user ID was not added to the payload by the authentication middleware.');

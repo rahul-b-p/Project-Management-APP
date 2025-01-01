@@ -9,9 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProjectByUserId = exports.deleteProjectById = exports.updateProjectById = exports.findProjectByUserId = exports.findProjectById = exports.insertProject = exports.validateProjectOwner = void 0;
+exports.deleteProjectByUserId = exports.deleteProjectById = exports.updateProjectById = exports.findProjectByUserId = exports.findProjectById = exports.insertProject = exports.validateProjectOwner = exports.projectExistById = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
+const projectExistById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const projectExists = yield models_1.Projects.exists({ _id });
+        if (projectExists)
+            return true;
+        else
+            return false;
+    }
+    catch (error) {
+        return false;
+    }
+});
+exports.projectExistById = projectExistById;
 const validateProjectOwner = (userId, _id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const ProjectExists = yield models_1.Projects.exists({ _id, userId });

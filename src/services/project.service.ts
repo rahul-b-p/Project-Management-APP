@@ -4,6 +4,15 @@ import { ProjectToUse } from "../types";
 import { logger } from "../utils/logger";
 
 
+export const projectExistById = async (_id: string): Promise<boolean> => {
+    try {
+        const projectExists = await Projects.exists({ _id });
+        if (projectExists) return true;
+        else return false;
+    } catch (error) {
+        return false;
+    }
+}
 
 export const validateProjectOwner = async (userId: string, _id: string) => {
     try {

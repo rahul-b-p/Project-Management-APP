@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import { customRequestWithPayload, projectBody, roles } from "../types";
 import { logger } from "../utils/logger";
 import { InternalServerError, NotFoundError } from "../errors";
-import { deleteProjectById, deleteProjectByUserId, findProjectById, findProjectByUserId, findRoleById, insertProject, updateProjectById, userExistsById, validateProjectOwner } from "../services";
+import { deleteProjectById, deleteProjectByUserId, findProjectById, findProjectByUserId, findRoleById, insertProject, projectExistById, updateProjectById, userExistsById, validateProjectOwner } from "../services";
 import { sendSuccessResponse } from "../utils/successResponse";
 import { ForbiddenError } from "../errors/forbidden.error";
 
@@ -78,6 +78,8 @@ export const updateProject = async (req: customRequestWithPayload<{ id: string }
     try {
         const { id } = req.params;
 
+        const isProjectExists = await projectExistById(id);
+        if (!isProjectExists) return next(new NotFoundError('Not Found any project with given Id'));
         const userId = req.payload?.id
         if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
 
@@ -102,6 +104,8 @@ export const updateProject = async (req: customRequestWithPayload<{ id: string }
 export const deleteProject = async (req: customRequestWithPayload<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+        const isProjectExists = await projectExistById(id);
+        if (!isProjectExists) return next(new NotFoundError('Not Found any project with given Id'));
 
         const userId = req.payload?.id
         if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
