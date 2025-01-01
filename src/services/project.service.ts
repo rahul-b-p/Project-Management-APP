@@ -3,6 +3,15 @@ import { projectBody, updateProjectBody } from "../types";
 import { ProjectToUse } from "../types";
 import { logger } from "../utils/logger";
 
+const convertToProjectToUse = (inputData: any): ProjectToUse => {
+    return {
+        _id: inputData._id,
+        userId: inputData.userId,
+        projectName: inputData.projectName,
+        description: inputData.description,
+        createAt: inputData.createAt
+    }
+}
 
 export const projectExistById = async (_id: string): Promise<boolean> => {
     try {
@@ -24,14 +33,14 @@ export const validateProjectOwner = async (userId: string, _id: string) => {
     }
 }
 
-export const insertProject = async (userId: string, project: projectBody): Promise<void> => {
+export const insertProject = async (userId: string, project: projectBody): Promise<ProjectToUse> => {
     try {
         const { projectName, description } = project;
         const newProject = new Projects({
             userId, projectName, description
         });
         await newProject.save();
-        return;
+        return convertToProjectToUse(newProject);
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
@@ -71,10 +80,10 @@ export const findProjectByUserId = async (userId: string): Promise<ProjectToUse[
     }
 }
 
-export const updateProjectById = async (_id: string, project: updateProjectBody): Promise<boolean> => {
+export const updateProjectById = async (_id: string, project: updateProjectBody): Promise<ProjectToUse | null> => {
     try {
         const existingProject = await Projects.findById({ _id });
-        if (!existingProject) return false;
+        if (!existingProject) return null;
 
         const { updateDescription, updateProjectName } = project;
 
@@ -82,11 +91,11 @@ export const updateProjectById = async (_id: string, project: updateProjectBody)
             projectName: updateProjectName ? updateProjectName : existingProject.projectName,
             description: updateDescription ? updateDescription : existingProject.description
         });
-        if (!updatedProject) return false;
+        if (!updatedProject) return null;
         await updatedProject.save();
-        return true
+        return convertToProjectToUse(updatedProject);
     } catch (error) {
-        return false;
+        return null;
     }
 }
 

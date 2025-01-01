@@ -14,8 +14,8 @@ export const createProject = async (req: customRequestWithPayload<{}, any, proje
         const userId = req.payload?.id;
         if (!userId) throw new Error('The user ID was not added to the payload by the authentication middleware.');
 
-        await insertProject(userId, req.body);
-        res.status(201).json(await sendSuccessResponse('new Project created', req.body));
+        const newProject = await insertProject(userId, req.body);
+        res.status(201).json(await sendSuccessResponse('new Project created', newProject));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
@@ -94,7 +94,7 @@ export const updateProject = async (req: customRequestWithPayload<{ id: string }
         const isUpdated = await updateProjectById(id, req.body);
         if (!isUpdated) return next(new NotFoundError('not found any project to update'));
 
-        res.status(200).json(await sendSuccessResponse('Project updated successfully', req.body));
+        res.status(200).json(await sendSuccessResponse('Project updated successfully', isUpdated));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

@@ -22,8 +22,8 @@ const createProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const userId = (_a = req.payload) === null || _a === void 0 ? void 0 : _a.id;
         if (!userId)
             throw new Error('The user ID was not added to the payload by the authentication middleware.');
-        yield (0, services_1.insertProject)(userId, req.body);
-        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('new Project created', req.body));
+        const newProject = yield (0, services_1.insertProject)(userId, req.body);
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('new Project created', newProject));
     }
     catch (error) {
         logger_1.logger.error(error);
@@ -108,7 +108,7 @@ const updateProject = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const isUpdated = yield (0, services_1.updateProjectById)(id, req.body);
         if (!isUpdated)
             return next(new errors_1.NotFoundError('not found any project to update'));
-        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Project updated successfully', req.body));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Project updated successfully', isUpdated));
     }
     catch (error) {
         logger_1.logger.error(error);

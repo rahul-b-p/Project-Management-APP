@@ -12,6 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProjectByUserId = exports.deleteProjectById = exports.updateProjectById = exports.findProjectByUserId = exports.findProjectById = exports.insertProject = exports.validateProjectOwner = exports.projectExistById = void 0;
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
+const convertToProjectToUse = (inputData) => {
+    return {
+        _id: inputData._id,
+        userId: inputData.userId,
+        projectName: inputData.projectName,
+        description: inputData.description,
+        createAt: inputData.createAt
+    };
+};
 const projectExistById = (_id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const projectExists = yield models_1.Projects.exists({ _id });
@@ -43,7 +52,7 @@ const insertProject = (userId, project) => __awaiter(void 0, void 0, void 0, fun
             userId, projectName, description
         });
         yield newProject.save();
-        return;
+        return convertToProjectToUse(newProject);
     }
     catch (error) {
         logger_1.logger.error(error.message);
@@ -91,19 +100,19 @@ const updateProjectById = (_id, project) => __awaiter(void 0, void 0, void 0, fu
     try {
         const existingProject = yield models_1.Projects.findById({ _id });
         if (!existingProject)
-            return false;
+            return null;
         const { updateDescription, updateProjectName } = project;
         const updatedProject = yield models_1.Projects.findByIdAndUpdate({ _id }, {
             projectName: updateProjectName ? updateProjectName : existingProject.projectName,
             description: updateDescription ? updateDescription : existingProject.description
         });
         if (!updatedProject)
-            return false;
+            return null;
         yield updatedProject.save();
-        return true;
+        return convertToProjectToUse(updatedProject);
     }
     catch (error) {
-        return false;
+        return null;
     }
 });
 exports.updateProjectById = updateProjectById;
