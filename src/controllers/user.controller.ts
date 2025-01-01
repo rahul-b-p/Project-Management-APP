@@ -25,9 +25,9 @@ export const createUser = async (req: customRequestWithPayload<{ role: string },
         const userToInsert: UserToSave = {
             username, email, hashPassword, role
         }
-        await insertUser(userToInsert);
+        const newUser = await insertUser(userToInsert);
 
-        res.status(201).json(await sendSuccessResponse(`New ${role} cretaed`, { username, email }))
+        res.status(201).json(await sendSuccessResponse(`New ${role} cretaed`, newUser))
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
@@ -97,7 +97,7 @@ export const updateUserByAdmin = async (req: customRequestWithPayload<{ id: stri
         const isUpdated = await updateUserById(id, req.body);
         if (!isUpdated) return next(new NotFoundError('User not Found with given id'));
 
-        res.status(200).json(await sendSuccessResponse('Updated userwith given id', { id, updateUsername, updateEmail }));
+        res.status(200).json(await sendSuccessResponse('Updated userwith given id', isUpdated));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
@@ -133,7 +133,7 @@ export const updateUser = async (req: customRequestWithPayload<{}, any, updateUs
         const isUpdated = await updateUserById(id, updateUserContent);
         if (!isUpdated) return next(new NotFoundError('User not Found'));
 
-        res.status(200).json(await sendSuccessResponse('User details updated'));
+        res.status(200).json(await sendSuccessResponse('User details updated',isUpdated));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));

@@ -1,10 +1,17 @@
 import { Users } from "../models"
 import { logger } from "../utils/logger";
-import { roles, signupBody, updateUserByIdBody, UserToSave, UserToUse } from "../types";
+import { roles, updateUserByIdBody, UserToSave, UserToShow, UserToUse } from "../types";
 import { getEncryptedPassword } from "../config";
 
 
-
+const convertToUserToShow = (userData: any): UserToShow => {
+    return {
+        _id: userData._id,
+        username: userData.username,
+        email: userData.email,
+        role: userData.role,
+    }
+}
 
 
 export const findUserByEmail = async (email: string): Promise<UserToUse & { hashPassword: string } | null> => {
@@ -98,7 +105,7 @@ export const findRoleById = async (_id: string): Promise<roles | null> => {
     }
 }
 
-export const insertUser = async (user: UserToSave): Promise<void> => {
+export const insertUser = async (user: UserToSave): Promise<UserToShow> => {
     try {
         const newUser = new Users({
             username: user.username,
@@ -107,22 +114,17 @@ export const insertUser = async (user: UserToSave): Promise<void> => {
             role: user.role
         });
         await newUser.save();
-        return;
+        return convertToUserToShow(newUser);
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);
     }
 }
 
-export const findAllUsersByRole = async (role: roles): Promise<UserToUse[] | []> => {
+export const findAllUsersByRole = async (role: roles): Promise<UserToShow[] | []> => {
     try {
         const allUsers = await Users.find({ role });
-        const result: UserToUse[] = allUsers.map((user) => ({
-            _id: user._id.toString(),
-            username: user.username,
-            email: user.email,
-            role: user.role
-        }));
+        const result: UserToShow[] = allUsers.map(convertToUserToShow);
         return result;
     } catch (error) {
         return [];
@@ -148,22 +150,22 @@ export const userExistsById = async (_id: string): Promise<boolean> => {
     }
 }
 
-export const updateUserById = async (_id: string, updateBody: updateUserByIdBody): Promise<boolean> => {
+export const updateUserById = async (_id: string, updateBody: updateUserByIdBody): Promise<UserToShow | null> => {
     try {
         const { updateEmail, updatePassword, updateUsername } = updateBody
         const existingUser = await Users.findById({ _id })
-        if (!existingUser) return false;
+        if (!existingUser) return null;
 
         const hashPassword = updatePassword ? await getEncryptedPassword(updatePassword) : existingUser.hashPassword;
         const updatedUser = await Users.findByIdAndUpdate({ _id }, {
             username: updateUsername ? updateUsername : existingUser.username,
             hashPassword,
             email: updateEmail ? updateEmail : existingUser.email
-        });
-        if (!updatedUser) return false;
+        }, { new: true });
+        if (!updatedUser) return null;
 
         await updatedUser.save();
-        return true;
+        return convertToUserToShow(updatedUser);
     } catch (error: any) {
         logger.error(error.message);
         throw new Error(error.message);

@@ -40,8 +40,8 @@ const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         const userToInsert = {
             username, email, hashPassword, role
         };
-        yield (0, services_1.insertUser)(userToInsert);
-        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)(`New ${role} cretaed`, { username, email }));
+        const newUser = yield (0, services_1.insertUser)(userToInsert);
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)(`New ${role} cretaed`, newUser));
     }
     catch (error) {
         logger_1.logger.error(error);
@@ -115,7 +115,7 @@ const updateUserByAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         const isUpdated = yield (0, services_1.updateUserById)(id, req.body);
         if (!isUpdated)
             return next(new errors_1.NotFoundError('User not Found with given id'));
-        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Updated userwith given id', { id, updateUsername, updateEmail }));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('Updated userwith given id', isUpdated));
     }
     catch (error) {
         logger_1.logger.error(error);
@@ -153,7 +153,7 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         const isUpdated = yield (0, services_1.updateUserById)(id, updateUserContent);
         if (!isUpdated)
             return next(new errors_1.NotFoundError('User not Found'));
-        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User details updated'));
+        res.status(200).json(yield (0, successResponse_1.sendSuccessResponse)('User details updated', isUpdated));
     }
     catch (error) {
         logger_1.logger.error(error);

@@ -13,6 +13,14 @@ exports.deleteUserById = exports.updateUserById = exports.userExistsById = expor
 const models_1 = require("../models");
 const logger_1 = require("../utils/logger");
 const config_1 = require("../config");
+const convertToUserToShow = (userData) => {
+    return {
+        _id: userData._id,
+        username: userData.username,
+        email: userData.email,
+        role: userData.role,
+    };
+};
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield models_1.Users.findOne({ email });
@@ -126,7 +134,7 @@ const insertUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
             role: user.role
         });
         yield newUser.save();
-        return;
+        return convertToUserToShow(newUser);
     }
     catch (error) {
         logger_1.logger.error(error.message);
@@ -137,12 +145,7 @@ exports.insertUser = insertUser;
 const findAllUsersByRole = (role) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allUsers = yield models_1.Users.find({ role });
-        const result = allUsers.map((user) => ({
-            _id: user._id.toString(),
-            username: user.username,
-            email: user.email,
-            role: user.role
-        }));
+        const result = allUsers.map(convertToUserToShow);
         return result;
     }
     catch (error) {
@@ -177,17 +180,17 @@ const updateUserById = (_id, updateBody) => __awaiter(void 0, void 0, void 0, fu
         const { updateEmail, updatePassword, updateUsername } = updateBody;
         const existingUser = yield models_1.Users.findById({ _id });
         if (!existingUser)
-            return false;
+            return null;
         const hashPassword = updatePassword ? yield (0, config_1.getEncryptedPassword)(updatePassword) : existingUser.hashPassword;
         const updatedUser = yield models_1.Users.findByIdAndUpdate({ _id }, {
             username: updateUsername ? updateUsername : existingUser.username,
             hashPassword,
             email: updateEmail ? updateEmail : existingUser.email
-        });
+        }, { new: true });
         if (!updatedUser)
-            return false;
+            return null;
         yield updatedUser.save();
-        return true;
+        return convertToUserToShow(updatedUser);
     }
     catch (error) {
         logger_1.logger.error(error.message);

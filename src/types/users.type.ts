@@ -19,6 +19,12 @@ export interface UserToUse{
     refreshToken?: string
 }
 
+export interface UserToShow {
+    _id: string;
+    username: string;
+    email: string;
+    role: roles;
+}
 
 
 export interface UserToSave{
