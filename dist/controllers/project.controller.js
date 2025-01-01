@@ -37,8 +37,8 @@ const createProjectForUser = (req, res, next) => __awaiter(void 0, void 0, void 
         const isValidUser = yield (0, services_1.userExistsById)(userId);
         if (!isValidUser)
             return next(new errors_1.NotFoundError('User not found to add a new project'));
-        yield (0, services_1.insertProject)(userId, req.body);
-        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('new Project created', req.body));
+        const newProject = yield (0, services_1.insertProject)(userId, req.body);
+        res.status(201).json(yield (0, successResponse_1.sendSuccessResponse)('new Project created', newProject));
     }
     catch (error) {
         logger_1.logger.error(error);

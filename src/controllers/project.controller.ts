@@ -28,8 +28,8 @@ export const createProjectForUser = async (req: customRequestWithPayload<{ userI
         const isValidUser = await userExistsById(userId);
         if (!isValidUser) return next(new NotFoundError('User not found to add a new project'));
 
-        await insertProject(userId, req.body);
-        res.status(201).json(await sendSuccessResponse('new Project created', req.body));
+        const newProject = await insertProject(userId, req.body);
+        res.status(201).json(await sendSuccessResponse('new Project created', newProject));
     } catch (error) {
         logger.error(error);
         next(new InternalServerError('Something went wrong'));
